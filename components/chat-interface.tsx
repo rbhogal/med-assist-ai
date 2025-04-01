@@ -1,13 +1,18 @@
 "use client";
-import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
-import { ChangeEvent, useState, useEffect, useRef } from "react";
-import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
+import { ChangeEvent, useState, useEffect, useRef, KeyboardEvent } from "react";
+import { ArrowUp } from "lucide-react";
+
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ArrowRight, ArrowUp, Send } from "lucide-react";
+
+interface Message {
+  text: string;
+  sender: "user" | "bot";
+}
 
 const ChatInterface: React.FC = () => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -45,7 +50,7 @@ const ChatInterface: React.FC = () => {
   // Trigger send on "Enter" key press
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault(); // Prevent newline
+      e.preventDefault();
       handleSendMessage();
     }
   };
@@ -56,10 +61,10 @@ const ChatInterface: React.FC = () => {
         <div className="max-w-3xl mx-auto ">
           {messages.map((msg, index) => (
             <div
-              key={index}
               className={`flex py-5 px-6 ${
                 msg.sender === "bot" ? "justify-start" : "justify-end"
               }`}
+              key={index}
             >
               <div
                 className={`py-2 px-4 rounded-t-3xl max-w-xs ${
@@ -82,17 +87,20 @@ const ChatInterface: React.FC = () => {
         w-full mx-3"
         >
           <Textarea
-            value={input}
+            aria-label="Chat input"
+            autoFocus
+            className="flex-grow resize-none text-gray-800 max-w-3xl"
             onChange={handleInputChange}
-            placeholder="Book, reschedule, or inquire about services."
-            rows={1}
-            className="flex-grow resize-none text-gray-800 max-w-3xl px-"
             onKeyDown={handleKeyDown}
+            placeholder="Book, reschedule, or inquire about services."
+            rows={2}
+            value={input}
           />
 
           <Button
+            aria-label="Send message"
+            className="bg-blue-500 w-8 h-8 p-0 sm:w-10 sm:h-10  rounded-full flex items-center justify-center cursor-pointer"
             onClick={handleSendMessage}
-            className="bg-blue-500 w-10 h-10 p-0 rounded-full flex items-center justify-center cursor-pointer"
           >
             <ArrowUp className="w-5 h-5" />
           </Button>
@@ -100,58 +108,6 @@ const ChatInterface: React.FC = () => {
       </div>
     </div>
   );
-
-  // return (
-  //   <div className=" max-w-3xl mx-auto my-10 bg-white rounded-3xl shadow-lg  ">
-  //     <Card>
-  //       <CardHeader>
-  //         <CardTitle>MedAssist</CardTitle>
-  //         <CardDescription>Your care, simplified.</CardDescription>
-  //       </CardHeader>
-  //       <div className="p-4 space-y-4">
-  //         <div className="space-y-2 h-96 overflow-y-auto px-2">
-  //           {messages.map((msg, index) => (
-  //             <div
-  //               key={index}
-  //               className={`flex ${
-  //                 msg.sender === "bot" ? "justify-start" : "justify-end"
-  //               }`}
-  //             >
-  //               <div
-  //                 className={`py-2 px-4 rounded-t-3xl max-w-xs ${
-  //                   msg.sender === "bot"
-  //                     ? "bg-gray-100 text-gray-800 rounded-br-3xl"
-  //                     : "bg-blue-500 text-white rounded-bl-3xl"
-  //                 }`}
-  //               >
-  //                 {msg.text}
-  //               </div>
-  //             </div>
-  //           ))}
-  //           <div ref={messagesEndRef} />
-  //         </div>
-
-  //         <div className="flex space-x-2">
-  //           <Textarea
-  //             value={input}
-  //             onChange={handleInputChange}
-  //             placeholder="Book, reschedule, or inquire about services."
-  //             rows={1}
-  //             className="flex-grow resize-none text-gray-800 "
-  //             onKeyDown={handleKeyDown}
-  //           />
-
-  //           <Button
-  //             onClick={handleSendMessage}
-  //             className="bg-blue-500 w-10 h-10 p-0 rounded-full flex items-center justify-center cursor-pointer"
-  //           >
-  //             <ArrowUp className="w-5 h-5" />
-  //           </Button>
-  //         </div>
-  //       </div>
-  //     </Card>
-  //   </div>
-  // );
 };
 
 export default ChatInterface;
