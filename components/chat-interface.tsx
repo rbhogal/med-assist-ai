@@ -55,10 +55,17 @@ const ChatInterface: React.FC = () => {
     }
   };
 
+  console.log(messages.length);
+
   return (
     <div className="w-full mx-auto flex flex-1 flex-col">
       <ScrollArea className=" px-4 h-[calc(100vh-200px)] w-full m-0">
         <div className="max-w-3xl mx-auto ">
+          {messages.length === 0 && (
+            <h1 className="font-bold text-3xl py-12 absolute bottom-0 left-1/2  transform -translate-x-1/2">
+              What can I assist with?
+            </h1>
+          )}
           {messages.map((msg, index) => (
             <div
               className={`flex py-5 px-6 ${
