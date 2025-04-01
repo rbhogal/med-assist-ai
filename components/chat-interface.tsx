@@ -51,25 +51,20 @@ const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className=" max-w-3xl mx-auto my-10 bg-white rounded-3xl  ">
-      {/* <Card>
-        <CardHeader>
-          <CardTitle>MedAssist</CardTitle>
-          <CardDescription>Your care, simplified.</CardDescription>
-        </CardHeader> */}
-      <div className="p-4 space-y-4">
-        <div className="space-y-2 h-96 overflow-y-auto px-2">
+    <div className="w-full mx-auto flex flex-1 flex-col">
+      <ScrollArea className=" px-4 h-[calc(100vh-200px)] w-full m-0">
+        <div className="max-w-3xl mx-auto ">
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`flex ${
+              className={`flex py-5 px-6 ${
                 msg.sender === "bot" ? "justify-start" : "justify-end"
               }`}
             >
               <div
                 className={`py-2 px-4 rounded-t-3xl max-w-xs ${
                   msg.sender === "bot"
-                    ? "bg-gray-100 text-gray-800 rounded-br-3xl"
+                    ? "bg-gray-200 text-gray-800 rounded-br-3xl"
                     : "bg-blue-500 text-white rounded-bl-3xl"
                 }`}
               >
@@ -79,14 +74,19 @@ const ChatInterface: React.FC = () => {
           ))}
           <div ref={messagesEndRef} />
         </div>
+      </ScrollArea>
 
-        <div className="flex space-x-2">
+      <div className="flex w-full flex justify-center ">
+        <div
+          className="bg-white flex max-w-3xl  space-x-2 p-3 rounded-3xl shadow-xs
+        w-full mx-3"
+        >
           <Textarea
             value={input}
             onChange={handleInputChange}
             placeholder="Book, reschedule, or inquire about services."
             rows={1}
-            className="flex-grow resize-none text-gray-800 "
+            className="flex-grow resize-none text-gray-800 max-w-3xl px-"
             onKeyDown={handleKeyDown}
           />
 
@@ -98,7 +98,6 @@ const ChatInterface: React.FC = () => {
           </Button>
         </div>
       </div>
-      {/* </Card> */}
     </div>
   );
 
