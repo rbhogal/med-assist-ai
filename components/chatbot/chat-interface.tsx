@@ -2,7 +2,7 @@
 import { ChangeEvent, useState, useEffect, useRef, KeyboardEvent } from "react";
 import { ArrowUp } from "lucide-react";
 
-import { Textarea } from "@/components/ui/textarea";
+import { Textarea } from "@/components/chatbot/textarea";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -62,7 +62,7 @@ const ChatInterface: React.FC = () => {
       <ScrollArea className=" px-4 h-[calc(100vh-200px)] w-full m-0">
         <div className="max-w-3xl mx-auto ">
           {messages.length === 0 && (
-            <h1 className="font-bold text-3xl py-12 absolute bottom-0 left-1/2  transform -translate-x-1/2">
+            <h1 className="font-bold text-2xl sm:text-3xl py-12 absolute bottom-0 left-1/2  transform -translate-x-1/2">
               What can I assist with?
             </h1>
           )}
@@ -74,7 +74,7 @@ const ChatInterface: React.FC = () => {
               key={index}
             >
               <div
-                className={`py-2 px-4 rounded-t-3xl max-w-xs ${
+                className={`py-2 px-4 rounded-t-3xl max-w-xs shadow-xs ${
                   msg.sender === "bot"
                     ? "bg-gray-200 text-gray-800 rounded-br-3xl"
                     : "bg-blue-500 text-white rounded-bl-3xl"
