@@ -5,15 +5,17 @@ import { ArrowUp } from "lucide-react";
 import { Textarea } from "@/components/chatbot/textarea";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import ChatbotLoadingReply from "./chatbot-loading-reply";
 
 interface Message {
   text: string;
   sender: "user" | "bot";
 }
 
-const ChatInterface: React.FC = () => {
+const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   // Auto-scroll effect
@@ -26,27 +28,6 @@ const ChatInterface: React.FC = () => {
     setInput(e.target.value);
   };
 
-  const handleSendMessage = () => {
-    console.log(input);
-    if (!input.trim()) return;
-
-    // Add user's message to chat history
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { text: input, sender: "user" },
-    ]);
-
-    // Placeholder for bot's response (this could be integrated with an API)
-    setTimeout(() => {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { text: "This is a bot reply", sender: "bot" },
-      ]);
-    }, 1000);
-
-    setInput("");
-  };
-
   // Trigger send on "Enter" key press
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -55,7 +36,38 @@ const ChatInterface: React.FC = () => {
     }
   };
 
-  console.log(messages.length);
+  const handleSendMessage = async () => {
+    if (!input.trim()) return;
+
+    // Add user's message to chat history
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      { text: input, sender: "user" },
+    ]);
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/openai", {
+        method: "POST",
+        body: JSON.stringify({ message: input }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const data = await response.json();
+
+      // Push AI response to the chat
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: data.reply, sender: "bot" },
+      ]);
+      setIsLoading(false);
+    } catch (err) {
+      console.error("Error sending message:", err);
+      setIsLoading(false);
+    }
+
+    setInput("");
+  };
 
   return (
     <div className="w-full mx-auto flex flex-1 flex-col">
@@ -84,6 +96,7 @@ const ChatInterface: React.FC = () => {
               </div>
             </div>
           ))}
+          {isLoading && <ChatbotLoadingReply />}
           <div ref={messagesEndRef} />
         </div>
       </ScrollArea>
@@ -117,4 +130,4 @@ const ChatInterface: React.FC = () => {
   );
 };
 
-export default ChatInterface;
+export default Chat;
