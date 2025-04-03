@@ -10,6 +10,7 @@ import ChatbotLoadingReply from "./chatbot-loading-reply";
 interface Message {
   text: string;
   sender: "user" | "bot";
+  url?: string;
 }
 
 const Chat: React.FC = () => {
@@ -58,7 +59,7 @@ const Chat: React.FC = () => {
       // Push AI response to the chat
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: data.reply, sender: "bot" },
+        { text: data.reply, sender: "bot", url: data.url },
       ]);
       setIsLoading(false);
     } catch (err) {
@@ -68,7 +69,7 @@ const Chat: React.FC = () => {
 
     setInput("");
   };
-
+  console.log(messages);
   return (
     <div className="w-full mx-auto flex flex-1 flex-col">
       <ScrollArea className=" px-4 h-[calc(100vh-200px)] w-full m-0">
@@ -92,7 +93,16 @@ const Chat: React.FC = () => {
                     : "bg-blue-500 text-white rounded-bl-3xl"
                 }`}
               >
-                {msg.text}
+                {msg.url ? (
+                  <>
+                    {msg.text}
+                    <a href={msg.url} target="_blank" rel="noopener noreferrer">
+                      Calendly Sign In
+                    </a>
+                  </>
+                ) : (
+                  msg.text
+                )}
               </div>
             </div>
           ))}
