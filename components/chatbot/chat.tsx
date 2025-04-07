@@ -1,6 +1,6 @@
 "use client";
 import { ChangeEvent, useState, useEffect, useRef, KeyboardEvent } from "react";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, SquarePen } from "lucide-react";
 
 import { Textarea } from "@/components/chatbot/textarea";
 import { Button } from "@/components/ui/button";
@@ -13,11 +13,28 @@ interface Message {
   url?: string;
 }
 
+interface Chat {
+  role: string;
+  content: string;
+}
+
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(true);
+
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const chatMessages = localStorage.getItem("chatMessages");
+    setMessages(chatMessages ? JSON.parse(chatMessages) : []);
+    setIsPageLoading(false);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("chatMessages", JSON.stringify(messages));
+  }, [messages]);
 
   // Auto-scroll effect
   useEffect(() => {
@@ -46,12 +63,17 @@ const Chat: React.FC = () => {
       { text: input, sender: "user" },
     ]);
 
+    // TODO: Temporarily store chat history in localStorage for demo purposes. Replace with backend storage later.
+    const chatHistory = JSON.parse(localStorage.getItem("chatHistory") || "[]");
+    chatHistory.push({ role: "user", content: input });
+    localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+
     setIsLoading(true);
 
     try {
       const response = await fetch("/api/openai", {
         method: "POST",
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ history: chatHistory }),
         headers: { "Content-Type": "application/json" },
       });
       const data = await response.json();
@@ -61,6 +83,12 @@ const Chat: React.FC = () => {
         ...prevMessages,
         { text: data.reply, sender: "bot", url: data.url },
       ]);
+
+      // Also push assistant reply to chatHistory
+      // TODO: Temporarily store chat history in localStorage for demo purposes. Replace with backend storage later.
+      chatHistory.push({ role: "assistant", content: data.reply });
+      localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+
       setIsLoading(false);
     } catch (err) {
       console.error("Error sending message:", err);
@@ -69,12 +97,18 @@ const Chat: React.FC = () => {
 
     setInput("");
   };
-  console.log(messages);
+
+  const handleResetChat = () => {
+    setMessages([]);
+    localStorage.removeItem("chatMessages");
+    localStorage.removeItem("chatHistory");
+  };
+
   return (
     <div className="w-full mx-auto flex flex-1 flex-col">
       <ScrollArea className=" px-4 h-[calc(100vh-200px)] w-full m-0">
         <div className="max-w-3xl mx-auto ">
-          {messages.length === 0 && (
+          {messages.length === 0 && !isPageLoading && (
             <h1 className="font-bold text-2xl sm:text-3xl py-12 absolute bottom-0 left-1/2  transform -translate-x-1/2">
               What can I assist with?
             </h1>
@@ -94,12 +128,14 @@ const Chat: React.FC = () => {
                 }`}
               >
                 {msg.url ? (
-                  <>
+                  <a
+                    className="text-blue-500  hover:text-blue-600 font-bold"
+                    href={msg.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     {msg.text}
-                    <a href={msg.url} target="_blank" rel="noopener noreferrer">
-                      Calendly Sign In
-                    </a>
-                  </>
+                  </a>
                 ) : (
                   msg.text
                 )}
@@ -127,13 +163,25 @@ const Chat: React.FC = () => {
             value={input}
           />
 
-          <Button
-            aria-label="Send message"
-            className="bg-blue-500 w-8 h-8 p-0 sm:w-10 sm:h-10  rounded-full flex items-center justify-center cursor-pointer"
-            onClick={handleSendMessage}
+          <div
+            className="flex flex-col gap-2
+          "
           >
-            <ArrowUp className="w-5 h-5" />
-          </Button>
+            <Button
+              aria-label="Send message"
+              className="bg-blue-500 w-8 h-8 p-0 sm:w-10 sm:h-10  rounded-full flex items-center justify-center cursor-pointer"
+              onClick={handleSendMessage}
+            >
+              <ArrowUp className="w-5 h-5" />
+            </Button>
+            <Button
+              aria-label="Reset chat"
+              className="bg-gray-500 w-8 h-8 p-0 sm:w-10 sm:h-10 rounded-full flex items-center justify-center cursor-pointer"
+              onClick={handleResetChat}
+            >
+              <SquarePen className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

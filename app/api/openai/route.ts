@@ -1,52 +1,53 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+import { handleCalendlyBooking } from "@/lib/calendly/utils";
+
+interface Message {
+  role: "user" | "assistant" | "system";
+  content: string;
+}
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const CALENDLY_API_URL = "https://api.calendly.com/scheduled_events";
-const CALENDLY_ACCESS_TOKEN = process.env.CALENDLY_ACCESS_TOKEN;
-const CALENDLY_OAUTH_URL = "https://auth.calendly.com/oauth/authorize";
-const CALENDLY_REDIRECT_URI = process.env.CALENDLY_REDIRECT_URI;
-const CALENDLY_CLIENT_ID = process.env.CALENDLY_CLIENT_ID;
-
-const checkUserCalendlyAuth = async (userId: string) => {
-  // placeholder func
-  return false;
-};
-
 export async function POST(req: Request) {
+  const IS_TEST = false;
+  let botReply = "";
+  let url: string | undefined;
+
   try {
-    const { message } = await req.json();
+    const { history } = await req.json();
+    const chatHistory: Message[] = [...history];
 
-    const aiResp = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [
-        {
-          role: "system",
-          content: `You are a friendly and helpful medical assistant at a primary care clinic. Analyze the user's message and determine if they are asking to book an appointment. Reply with 'MED ASSIST BOOK AN APPOINTMENT' otherwise reply normally`,
-        },
-        { role: "user", content: message },
-      ],
-    });
+    if (!IS_TEST) {
+      const aiResp = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [
+          {
+            role: "system",
+            content: `You are a friendly and helpful medical assistant at a primary care clinic. If a user isn't asking questions relevant to a primary care clinic, don't answer but instead gently remind them to answer questions regarding a primary care clinic. You can reply to general greetings however. Analyze the user's message and determine if they are asking to book an appointment. Reply with 'MED ASSIST BOOK AN APPOINTMENT' otherwise reply normally.`,
+          },
+          ...chatHistory,
+        ],
+      });
 
-    let botReply =
-      aiResp.choices[0]?.message.content || `Sorry, I didn't get that.`;
-    let url = undefined;
+      console.log({ ai: aiResp.choices[0]?.message.content });
+      botReply =
+        aiResp.choices[0]?.message.content || `Sorry, I didn't get that.`;
+    } else {
+      botReply = "testing";
+    }
 
     // If user asks to book an appointment, call Calendly API
-    if (botReply.includes("MED ASSIST BOOK AN APPOINTMENT")) {
-      const isAuth = await checkUserCalendlyAuth("userId");
+    if (botReply.trim() === "MED ASSIST BOOK AN APPOINTMENT") {
+      const schedulingLink = await handleCalendlyBooking();
 
-      if (!isAuth) {
-        // redirect them to the Calendly sign-in page
+      console.log({ schedulingLink });
 
-        botReply = `Please sign in to Calendly:`;
-        url = `${CALENDLY_OAUTH_URL}?client_id=${CALENDLY_CLIENT_ID}&response_type=code&redirect_uri=${CALENDLY_REDIRECT_URI}`;
-      } else {
-        // book appointment
-      }
+      botReply = "Click here to book your appointment";
+      url = schedulingLink;
     }
     return NextResponse.json({
       reply: botReply,
