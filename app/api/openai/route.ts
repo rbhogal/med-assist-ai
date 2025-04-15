@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
-import { handleCalendlyBooking } from "@/lib/calendly/utils";
+import { FaqSystemPrompt, handleCalendlyBooking } from "@/lib/calendly/utils";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -25,6 +25,7 @@ export async function POST(req: Request) {
       const aiResp = await openai.chat.completions.create({
         model: "gpt-4",
         messages: [
+          { role: "system", content: FaqSystemPrompt },
           {
             role: "system",
             content: `You are a friendly and helpful medical assistant at a primary care clinic. If a user isn't asking questions relevant to a primary care clinic, don't answer but instead gently remind them to answer questions regarding a primary care clinic. You can reply to general greetings however. Analyze the user's message and determine if they are asking to book an appointment. Reply with 'MED ASSIST BOOK AN APPOINTMENT' otherwise reply normally.`,
