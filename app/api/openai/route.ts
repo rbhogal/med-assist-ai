@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
-import { FaqSystemPrompt, handleCalendlyBooking } from "@/lib/calendly/utils";
+import { handleCalendlyBooking } from "@/lib/calendly/utils";
+import { FaqSystemPrompt } from "@/lib/faq";
 
 interface Message {
   role: "user" | "assistant" | "system";
