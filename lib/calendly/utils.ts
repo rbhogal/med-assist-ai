@@ -42,7 +42,7 @@ const faqs = [
   {
     question: "What services do you offer?",
     answer:
-      "Apart from your primary care needs we provide x-rays teand blood tests on site",
+      "Apart from your primary care needs we provide x-rays and blood tests on site",
   },
   {
     question: "What should I bring to my appointment?",
