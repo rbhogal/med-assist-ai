@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# google service account JSON file
+medassist-ai-456922-a2037f251e9d.json

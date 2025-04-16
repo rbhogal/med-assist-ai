@@ -1,7 +1,7 @@
 const faqs = [
   {
     question: "Where is your address location?",
-    answer: "123 Demo St. AI City, MA",
+    answer: "123 Demo St. AI City MA, 99999",
   },
   {
     question: "What are your hours of operation?",
@@ -30,7 +30,7 @@ const faqs = [
   {
     question: "Do you offer payment plans?",
     answer:
-      "Financial services are available. Please contact the clinic for more information.",
+      "Financial services are available. Please contact the clinic for more information at 555-555-5555.",
   },
   {
     question: "What are the names of the doctor or doctors at the clinic?",
@@ -40,7 +40,7 @@ const faqs = [
   {
     question: "What services do you offer?",
     answer:
-      "Apart from your primary care needs we provide x-rays and blood tests on site",
+      "Apart from your primary care needs we provide x-rays and blood tests on site.",
   },
   {
     question: "What should I bring to my appointment?",
@@ -48,11 +48,12 @@ const faqs = [
   },
   {
     question: "How do I get my test results?",
-    answer: "Emailed to you in 1-3 days.",
+    answer: "Emailed to you in 1-3 days!",
   },
   {
     question: "Can I request a copy of my medical records?",
-    answer: "Of course! Contact the office phone number.",
+    answer:
+      "Of course! Contact the office phone number at 555-555-5555 we would be happy to help!",
   },
   {
     question: "Do you have COVID protocols?",
@@ -62,7 +63,7 @@ const faqs = [
   {
     question: "Do you accept walk-ins?",
     answer:
-      "Yes! Most walk-ins can be accommodated. Please give us a call to know more.",
+      "Yes! Most walk-ins can be accommodated. Please give us a call for more details.",
   },
   {
     question: "I have an emergency, is there a doctor available?",
@@ -73,6 +74,10 @@ const faqs = [
     question: "Im late to my appointment is that a problem?",
     answer:
       "Please give us a call ahead if you suspect you are going to be late. For tardiness longer than 20 minutes please reschedule, otherwise we will try to accommodate you.",
+  },
+  {
+    question: "Can I talk to a live person?",
+    answer: "Of course! Call us at 555-555-5555.",
   },
 ];
 
