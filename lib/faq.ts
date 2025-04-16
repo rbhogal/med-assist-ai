@@ -33,6 +33,15 @@ const faqs = [
       "Financial services are available. Please contact the clinic for more information at 555-555-5555.",
   },
   {
+    question: "How much is an out of pocket visit cost?",
+    answer: "$50.00",
+  },
+  {
+    question: "Do you offer payment plans?",
+    answer:
+      "Financial services are available. Please contact the clinic for more information at 555-555-5555.",
+  },
+  {
     question: "What are the names of the doctor or doctors at the clinic?",
     answer:
       "We have three doctors on staff. John Doe, M.D., Jane Doe, M.D., and Juan Perez, M.D.  ",

@@ -181,21 +181,6 @@ const Chat: React.FC = () => {
             >
               <SquarePen className="w-5 h-5" />
             </Button>
-            <Button
-              onClick={async () => {
-                const resp = await fetch("/api/calender/create", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                });
-
-                const data = await resp.json();
-                console.log(data);
-              }}
-            >
-              create event
-            </Button>
           </div>
         </div>
       </div>
