@@ -1,5 +1,8 @@
-import { google } from "googleapis";
+import { NextResponse } from "next/server";
 import path from "path";
+
+import { google } from "googleapis";
+import { toZonedTime } from "date-fns-tz";
 
 interface AvailabilityOptions {
   durationMinutes?: number;
@@ -80,13 +83,16 @@ function roundToNextQuarterHour(date: Date): Date {
   return rounded;
 }
 
-const findEarliestAvailability = async ({
-  durationMinutes = 30,
-  timeMin = new Date().toISOString(),
-  timeMax = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
-  workingHours = { start: "09:00", end: "17:00" },
-  timezone = "America/Los_Angeles",
-}: AvailabilityOptions): Promise<string | null> => {
+const convertToPST = (isoDate: string) => {
+  const utcDate = new Date(isoDate); // assuming isoDate is in UTC
+  const timeZone = "America/Los_Angeles"; // Clinic's time zone
+
+  // Convert UTC to PST
+  const localDate = toZonedTime(utcDate, timeZone);
+  return localDate;
+};
+
+const getBusyTimes = async (timeMin, timeMax, timezone) => {
   const freeBusy = await calendar.freebusy.query({
     auth,
     requestBody: {
@@ -99,6 +105,74 @@ const findEarliestAvailability = async ({
 
   const busyTimes = freeBusy.data.calendars?.[calendarId]?.busy || [];
 
+  // Convert all busy times to PST
+  const busyTimesInPST = busyTimes.map(({ start, end }) => ({
+    start: convertToPST(start),
+    end: convertToPST(end),
+  }));
+
+  return busyTimesInPST;
+};
+
+type TimeSlot = {
+  start: string; // ISO string (e.g., '2025-04-16T16:00:00Z')
+  end: string; // ISO string (e.g., '2025-04-16T16:30:00Z')
+};
+
+async function getAvailableTimeSlots({
+  start,
+  end,
+  busy,
+}: {
+  start: Date;
+  end: Date;
+  busy: Array<{ start: string; end: string }>; // Busy times are arrays of objects
+}): Promise<NextResponse<TimeSlot[]>> {
+  // 1. Set up the slot duration you want, e.g., 30-minute intervals.
+  const slotDuration = 30; // minutes
+  const availableSlots: TimeSlot[] = [];
+
+  // 2. Create time slots between start and end time
+  const currentTime = new Date(start);
+  while (currentTime < end) {
+    const nextTime = new Date(currentTime.getTime() + slotDuration * 60000); // Add slot duration to current time
+
+    // Convert to ISO strings to standardize time format
+    const currentTimeISO = currentTime.toISOString();
+    const nextTimeISO = nextTime.toISOString();
+
+    // 3. Check if the current slot overlaps with any busy times
+    const isBusy = busy.some((busyTime) => {
+      const busyStart = new Date(busyTime.start).toISOString();
+      const busyEnd = new Date(busyTime.end).toISOString();
+      return (
+        currentTimeISO < busyEnd && nextTimeISO > busyStart // If the slot overlaps with a busy time
+      );
+    });
+
+    // 4. If the slot is not busy, add it to the available slots list
+    if (!isBusy) {
+      availableSlots.push({
+        start: currentTimeISO,
+        end: nextTimeISO,
+      });
+    }
+
+    // Move to the next slot
+    currentTime.setMinutes(currentTime.getMinutes() + slotDuration);
+  }
+
+  return NextResponse.json(availableSlots);
+}
+
+const findEarliestAvailability = async ({
+  durationMinutes = 30,
+  timeMin = new Date().toISOString(),
+  timeMax = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+  workingHours = { start: "09:00", end: "17:00" },
+  timezone = "America/Los_Angeles",
+}: AvailabilityOptions): Promise<string | null> => {
+  const busyTimes = await getBusyTimes(timeMin, timeMax, timezone);
   const now = roundToNextQuarterHour(new Date(timeMin));
   const end = new Date(timeMax);
   const intervalMs = durationMinutes * 60 * 1000;
@@ -133,4 +207,39 @@ const findEarliestAvailability = async ({
   return null; // no time found in the range
 };
 
-export { createGoogleCalenderEvent, findEarliestAvailability };
+const checkTimeAvailability = async ({
+  proposedTime,
+  durationMinutes = 30,
+  timeMin = new Date().toISOString(),
+  timeMax = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+  timezone = "America/Los_Angeles",
+}: {
+  proposedTime: string; // proposed time in ISO string format
+  durationMinutes?: number;
+  timeMin?: string;
+  timeMax?: string;
+  timezone?: string;
+}): Promise<boolean> => {
+  const busyTimes = await getBusyTimes(timeMin, timeMax, timezone);
+  const proposedStart = new Date(proposedTime);
+  const proposedEnd = new Date(
+    proposedStart.getTime() + durationMinutes * 60 * 1000
+  );
+
+  // Check if the proposed time overlaps with any busy time
+  const overlap = busyTimes.some((b) => {
+    const busyStart = new Date(b.start as string);
+    const busyEnd = new Date(b.end as string);
+    return proposedStart < busyEnd && proposedEnd > busyStart; // checks for overlap
+  });
+
+  return !overlap; // If no overlap, return true (i.e., the time is available)
+};
+
+export {
+  createGoogleCalenderEvent,
+  findEarliestAvailability,
+  checkTimeAvailability,
+  getAvailableTimeSlots,
+  getBusyTimes,
+};

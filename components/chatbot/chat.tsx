@@ -6,11 +6,13 @@ import { Textarea } from "@/components/chatbot/textarea";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatbotLoadingReply from "./chatbot-loading-reply";
+import { BookingCalendar } from "../booking-calendar";
 
 interface Message {
   text: string;
   sender: "user" | "bot";
   url?: string;
+  availableTimes?: [];
 }
 
 interface Chat {
@@ -81,7 +83,12 @@ const Chat: React.FC = () => {
       // Push AI response to the chat
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: data.reply, sender: "bot", url: data.url },
+        {
+          text: data.reply,
+          sender: "bot",
+          url: data.url,
+          availableTimes: data.availableTimes,
+        },
       ]);
 
       // Also push assistant reply to chatHistory
@@ -142,6 +149,7 @@ const Chat: React.FC = () => {
               </div>
             </div>
           ))}
+
           {isLoading && <ChatbotLoadingReply />}
           <div ref={messagesEndRef} />
         </div>
