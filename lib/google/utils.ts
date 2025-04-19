@@ -83,16 +83,11 @@ function roundToNextQuarterHour(date: Date): Date {
   return rounded;
 }
 
-const convertToPST = (isoDate: string) => {
-  const utcDate = new Date(isoDate); // assuming isoDate is in UTC
-  const timeZone = "America/Los_Angeles"; // Clinic's time zone
-
-  // Convert UTC to PST
-  const localDate = toZonedTime(utcDate, timeZone);
-  return localDate;
-};
-
-const getBusyTimes = async (timeMin, timeMax, timezone) => {
+const getBusyTimes = async (
+  timeMin: string,
+  timeMax: string,
+  timezone: string
+) => {
   const freeBusy = await calendar.freebusy.query({
     auth,
     requestBody: {
@@ -105,13 +100,7 @@ const getBusyTimes = async (timeMin, timeMax, timezone) => {
 
   const busyTimes = freeBusy.data.calendars?.[calendarId]?.busy || [];
 
-  // Convert all busy times to PST
-  const busyTimesInPST = busyTimes.map(({ start, end }) => ({
-    start: convertToPST(start),
-    end: convertToPST(end),
-  }));
-
-  return busyTimesInPST;
+  return busyTimes;
 };
 
 type TimeSlot = {

@@ -17,24 +17,24 @@ export type TimeSlot = {
  */
 export async function GET() {
   try {
+    const timezone = "America/Los_Angeles";
     const timeMin = new Date().toISOString();
     const timeMax = new Date(
       Date.now() + 28 * 24 * 60 * 60 * 1000
     ).toISOString();
-    const timezone = "America/Los_Angeles";
 
-    // 📅 Define clinic working hours (24-hour format)
+    // Define clinic working hours (24-hour format)
     const workingHours = { startHour: 9, endHour: 17 }; // 9:00 AM to 5:00 PM
 
-    // 2️⃣ Fetch busy times from Google Calendar
+    // Fetch busy times from Google Calendar
     const busy = await getBusyTimes(timeMin, timeMax, timezone);
     console.log({ busy });
 
-    // 3️⃣ Generate available slots (30-min increments) within working hours
+    // Generate available slots (30-min increments) within working hours
     const slotDuration = 30; // minutes
     const rawSlots: TimeSlot[] = [];
     let cursor = new Date(timeMin);
-    cursor = toZonedTime(cursor, timezone);
+    cursor = toZonedTime(cursor, timezone); // convert to PST
     const windowEnd = new Date(timeMax);
 
     // Align cursor to clinic opening if before working hours
@@ -45,6 +45,14 @@ export async function GET() {
     // Advance through each day in the window
     while (cursor < windowEnd) {
       const hour = cursor.getHours();
+      const dayOfWeek = cursor.getDay();
+
+      // Skip weekends (0 = Sunday, 6 = Saturday)
+      if (dayOfWeek === 0 || dayOfWeek === 6) {
+        cursor.setDate(cursor.getDate() + 1);
+        cursor.setHours(workingHours.startHour, 0, 0, 0);
+        continue;
+      }
 
       // If past clinic closing, jump to next day at opening
       if (hour >= workingHours.endHour) {
@@ -53,6 +61,7 @@ export async function GET() {
         continue;
       }
 
+      // convert to PST
       const next = new Date(cursor.getTime() + slotDuration * 60 * 1000);
       const startISO = format(cursor, "yyyy-MM-dd'T'HH:mm:ssXXX", {
         timeZone: timezone,
@@ -68,9 +77,13 @@ export async function GET() {
         continue;
       }
 
-      // Check if this slot overlaps any busy time
+      const zonedCursor = toZonedTime(cursor, timezone);
+      const zonedNext = toZonedTime(next, timezone);
+
       const isBusy = busy.some(({ start, end }) => {
-        return startISO < end && endISO > start;
+        const busyStart = new Date(start);
+        const busyEnd = new Date(end);
+        return zonedCursor < busyEnd && zonedNext > busyStart;
       });
 
       if (!isBusy) {
@@ -81,7 +94,7 @@ export async function GET() {
       cursor.setMinutes(cursor.getMinutes() + slotDuration);
     }
 
-    // 4️⃣ Group available slots by date into { date, slots[] } format
+    // 4Group available slots by date into { date, slots[] } format
     const grouped: Record<string, string[]> = {};
     for (const slot of rawSlots) {
       const [datePart, timePart] = slot.start.split("T");
