@@ -85,8 +85,28 @@ const faqs = [
       "Please give us a call ahead if you suspect you are going to be late. For tardiness longer than 20 minutes please reschedule, otherwise we will try to accommodate you.",
   },
   {
+    question: "Are you open during holidays?",
+    answer: "We closed on federal holidays.",
+  },
+  {
+    question: "Do I get a reminder for my upcoming appointments?",
+    answer: "This is just a demo, no.",
+  },
+  {
+    question: "Is your location wheelchair accessible?",
+    answer: "Of course!",
+  },
+  {
     question: "Can I talk to a live person?",
     answer: "Of course! Call us at 555-555-5555.",
+  },
+  {
+    question: "Can I give access to someone to obtain my PHI?",
+    answer: "Yes. Please call us at 555-555-5555.",
+  },
+  {
+    question: "Can I just work with a male/female doctor?",
+    answer: "Not a problem.",
   },
 ];
 

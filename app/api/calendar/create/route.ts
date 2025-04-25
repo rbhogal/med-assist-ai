@@ -3,10 +3,11 @@ import path from "path";
 import { NextResponse } from "next/server";
 
 const SCOPES = ["https://www.googleapis.com/auth/calendar"];
-const calendarId = process.env.GOOGLE_CALENDER_ID;
+const calendarId = process.env.GOOGLE_CALENDAR_ID;
 
-export async function POST() {
+export async function POST(req: Request) {
   try {
+    const { name, email, slot } = await req.json();
     const keyFilePath = path.join(
       process.cwd(),
       process.env.GOOGLE_SERVICE_ACCOUNT_PATH
@@ -20,15 +21,15 @@ export async function POST() {
     const calendar = google.calendar({ version: "v3", auth });
 
     const event = {
-      summary: "Appointment Booked! 🎉",
-      description: "Demo appointment booking",
+      summary: `Appointment with ${name}`,
+      description: `Booked by ${email}`,
       start: {
-        dateTime: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
-        timeZone: "UTC",
+        dateTime: slot.start,
+        timeZone: "America/Los_Angeles",
       },
       end: {
-        dateTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-        timeZone: "UTC",
+        dateTime: slot.end,
+        timeZone: "America/Los_Angeles",
       },
     };
 

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Activity, ClipboardPlus } from "lucide-react";
+import { ClipboardPlus } from "lucide-react";
 import Link from "next/link";
 
 export default function LandingPage() {

@@ -1,44 +1,78 @@
 "use client";
 import { TimeSlot } from "@/app/api/calendar/available-slots/route";
 import { BookingCalendar } from "@/components/booking-calendar";
-import { Calendar } from "@/components/ui/calendar";
-import { getBusyTimes } from "@/lib/google/utils";
-import { useEffect, useState } from "react";
+import { ContactForm } from "@/components/booking/contact-form";
+import Stepper from "@/components/ui/stepper";
+import { ReactNode, useEffect, useState } from "react";
+import { FormProvider } from "react-hook-form";
 
-const availableSlots = [
-  {
-    date: "2025-04-17",
-    slots: ["09:00", "10:30", "14:00", "16:30"],
-  },
-  {
-    date: "2025-04-18",
-    slots: ["10:00", "11:30", "13:00", "15:30"],
-  },
-  {
-    date: "2025-04-19",
-    slots: ["09:00", "12:00", "14:30"],
-  },
-  {
-    date: "2025-04-20",
-    slots: ["10:00", "11:00", "13:30", "15:00", "16:00"],
-  },
-  {
-    date: "2025-04-21",
-    slots: ["09:30", "11:00", "14:00"],
-  },
-  {
-    date: "2025-04-22",
-    slots: ["10:00", "12:30", "15:00"],
-  },
-  {
-    date: "2025-04-23",
-    slots: ["09:00", "10:30", "13:00", "14:30", "16:00"],
-  },
-];
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { BookingCalendarProvider } from "@/app/context/BookingContext";
+import { Wizard } from "@/components/wizard/wizard";
+import { PersonalInfoStep } from "@/components/wizard/steps/personal-info-step";
+
+const calenderSchema = z.object({
+  slotDate: z
+    .object({
+      start: z.string(),
+      end: z.string(),
+    })
+    .refine((data) => data.start && data.end, {
+      message: "Please select a date and time.",
+    }),
+});
+const contactSchema = z.object({
+  firstName: z.string().min(2, { message: "First name is required" }),
+  lastName: z.string().min(2, { message: "Last name is required" }),
+  email: z.string().email({ message: "Invalid email" }),
+});
+
+const FormSchema = z.object({
+  ...calenderSchema.shape,
+  ...contactSchema.shape,
+});
 
 export default function Booking() {
   const [isLoading, setIsLoading] = useState(true);
   const [slots, setSlots] = useState<TimeSlot[]>([]);
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    mode: "onChange",
+    defaultValues: {
+      slotDate: { start: "", end: "" },
+      firstName: "",
+      lastName: "",
+      email: "",
+    },
+  });
+
+  const onSubmit = (data: z.infer<typeof FormSchema>) => {
+    console.log(data);
+  };
+
+  const steps = [
+    {
+      id: "calender",
+      title: "Date and time",
+      schema: calenderSchema,
+      content: <BookingCalendar availableSlots={slots} form={form} />,
+    },
+    {
+      id: "contact",
+      title: "Contact",
+      schema: contactSchema,
+      content: <PersonalInfoStep form={form} />,
+    },
+    {
+      id: "confirmation",
+      title: "Booked!",
+      schema: null,
+      content: <p>Appointment booked!</p>,
+    },
+  ];
 
   useEffect(() => {
     const fetchAvailableSlots = async () => {
@@ -59,9 +93,26 @@ export default function Booking() {
     fetchAvailableSlots();
   }, []);
 
+  console.log(form.formState.errors);
+
   return (
-    <div className="flex w-full justify-center p-10 items-center">
-      {isLoading ? "loading..." : <BookingCalendar availableSlots={slots} />}
+    <div className="p-10">
+      {/* <h1 className="font-bold text-3xl sm:text-4xl text-center sm:text-3xl  mb-6 sm:mb-6">
+        Appointment Booking
+      </h1> */}
+      {isLoading ? (
+        <p className="text-center">Loading...</p>
+      ) : (
+        <BookingCalendarProvider>
+          {/* <FormProvider {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              <Stepper steps={steps} form={form} />
+            </form>
+          </FormProvider> */}
+          {/* <Wizard slots={slots} steps={steps} form={form} /> */}
+          <Wizard steps={steps} form={form} slots={slots} />
+        </BookingCalendarProvider>
+      )}
     </div>
   );
 }

@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import path from "path";
 
 import { google } from "googleapis";
-import { toZonedTime } from "date-fns-tz";
 
 interface AvailabilityOptions {
   durationMinutes?: number;
@@ -13,7 +12,7 @@ interface AvailabilityOptions {
 }
 
 const SCOPES = ["https://www.googleapis.com/auth/calendar"];
-const calendarId = process.env.GOOGLE_CALENDER_ID;
+const calendarId = process.env.GOOGLE_CALENDAR_ID!;
 const keyFilePath = path.join(
   process.cwd(),
   process.env.GOOGLE_SERVICE_ACCOUNT_PATH!
@@ -83,11 +82,13 @@ function roundToNextQuarterHour(date: Date): Date {
   return rounded;
 }
 
+type BusyTime = { start: string; end: string };
+
 const getBusyTimes = async (
   timeMin: string,
   timeMax: string,
   timezone: string
-) => {
+): Promise<BusyTime[]> => {
   const freeBusy = await calendar.freebusy.query({
     auth,
     requestBody: {
@@ -100,7 +101,12 @@ const getBusyTimes = async (
 
   const busyTimes = freeBusy.data.calendars?.[calendarId]?.busy || [];
 
-  return busyTimes;
+  const filteredBusyTimes: BusyTime[] = busyTimes.filter(
+    (b): b is BusyTime =>
+      typeof b.start === "string" && typeof b.end === "string"
+  );
+
+  return filteredBusyTimes;
 };
 
 type TimeSlot = {

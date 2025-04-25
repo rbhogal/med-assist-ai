@@ -28,7 +28,6 @@ export async function GET() {
 
     // Fetch busy times from Google Calendar
     const busy = await getBusyTimes(timeMin, timeMax, timezone);
-    console.log({ busy });
 
     // Generate available slots (30-min increments) within working hours
     const slotDuration = 30; // minutes

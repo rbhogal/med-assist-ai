@@ -6,7 +6,7 @@ import { Textarea } from "@/components/chatbot/textarea";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatbotLoadingReply from "./chatbot-loading-reply";
-import { BookingCalendar } from "../booking-calendar";
+import Link from "next/link";
 
 interface Message {
   text: string;
@@ -135,14 +135,14 @@ const Chat: React.FC = () => {
                 }`}
               >
                 {msg.url ? (
-                  <a
+                  <Link
                     className="text-blue-500  hover:text-blue-600 font-bold"
                     href={msg.url}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     {msg.text}
-                  </a>
+                  </Link>
                 ) : (
                   msg.text
                 )}
