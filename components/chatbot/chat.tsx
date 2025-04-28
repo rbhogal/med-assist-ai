@@ -116,9 +116,14 @@ const Chat: React.FC = () => {
       <ScrollArea className=" px-4 h-[calc(100vh-200px)] w-full m-0">
         <div className="max-w-3xl mx-auto ">
           {messages.length === 0 && !isPageLoading && (
-            <h1 className="font-bold text-2xl sm:text-3xl py-12 absolute bottom-0 left-1/2  transform -translate-x-1/2">
-              What can I assist with?
-            </h1>
+            <>
+              <h1 className="font-bold text-2xl sm:text-3xl absolute bottom-12 left-1/2  transform -translate-x-1/2">
+                What can I assist with?
+              </h1>
+              {/* <Button className="absolute bottom-4 mx-4 bg-blue-500 text-white px-5 py-2 rounded-full cursor-pointer shadow-xs  transition-all text-sm font-semibold">
+                Book Appointment
+              </Button> */}
+            </>
           )}
           {messages.map((msg, index) => (
             <div

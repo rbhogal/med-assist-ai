@@ -13,7 +13,7 @@ const openai = new OpenAI({
 });
 
 export async function POST(req: Request) {
-  const IS_TEST = false;
+  const IS_TEST = true;
   let botReply = "";
   let url: string | undefined | null;
 
@@ -38,17 +38,14 @@ export async function POST(req: Request) {
       botReply =
         aiResp.choices[0]?.message.content || `Sorry, I didn't get that.`;
     } else {
-      console.log("med book");
       botReply = "MED ASSIST BOOK AN APPOINTMENT";
     }
 
     // If user asks to book an appointment, send to scheduler
-    console.log({ botReply });
     if (
       botReply.trim() === "MED ASSIST BOOK AN APPOINTMENT" ||
       botReply.trim() === "Click here to book your appointment"
     ) {
-      console.log("booking");
       botReply = "Click here to book your appointment";
       url = "/demo/booking";
       // 1) check e
