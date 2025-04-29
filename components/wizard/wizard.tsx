@@ -14,13 +14,9 @@ export function Wizard({ steps, form, onSubmit, ref }) {
   const [currentStep, setCurrentStep] = useState(0);
   const { trigger } = form;
 
-  // Function to handle going to the next step
   const handleNext = async () => {
-    // Get the fields for the current step
     const currentStepSchema = steps[currentStep].schema;
     const fields = Object.keys(currentStepSchema.shape);
-
-    // Only validate the fields in the current step
     const isValid = await trigger(fields as any, { shouldFocus: true });
 
     if (isValid) {
@@ -28,12 +24,10 @@ export function Wizard({ steps, form, onSubmit, ref }) {
     }
   };
 
-  // Function to handle going to the previous step
   const handlePrevious = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   };
 
-  // Determine which step component to render
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:

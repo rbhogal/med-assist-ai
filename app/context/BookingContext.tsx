@@ -10,9 +10,9 @@ type SlotDate = {
 type BookingContextType = {
   selectedDate: SlotDate | null;
   setSelectedDate: (date: SlotDate) => void;
-  clearSelected: () => void;
   isSelected: number | null;
   setIsSelected: (val: number | null) => void;
+  handleSelectedDate: (date: SlotDate) => void;
 };
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
@@ -25,8 +25,9 @@ export const BookingCalendarProvider = ({
   const [selectedDate, setSelectedDate] = useState<SlotDate | null>(null);
   const [isSelected, setIsSelected] = useState<number | null>(null);
 
-  const clearSelected = () => {
+  const handleSelectedDate = (date) => {
     setIsSelected(null);
+    setSelectedDate(date);
   };
 
   return (
@@ -34,9 +35,9 @@ export const BookingCalendarProvider = ({
       value={{
         selectedDate,
         setSelectedDate,
-        clearSelected,
         isSelected,
         setIsSelected,
+        handleSelectedDate,
       }}
     >
       {children}

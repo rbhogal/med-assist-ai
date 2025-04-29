@@ -1,14 +1,11 @@
 "use client";
 import { BookingCalendar } from "@/components/booking-calendar";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormProvider, useForm } from "react-hook-form";
-import {
-  BookingCalendarProvider,
-  useBookingCalendar,
-} from "@/app/context/BookingContext";
+import { BookingCalendarProvider } from "@/app/context/BookingContext";
 import { Wizard } from "@/components/wizard/wizard";
 import { PersonalInfoStep } from "@/components/wizard/steps/personal-info-step";
 
@@ -78,17 +75,7 @@ export default function Booking() {
 
   return (
     <div className="p-4 sm:p-10">
-      {/* <h1 className="font-bold text-3xl sm:text-4xl text-center sm:text-3xl  mb-6 sm:mb-6">
-        Appointment Booking
-      </h1> */}
-
       <BookingCalendarProvider>
-        {/* <FormProvider {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <Stepper steps={steps} form={form} />
-            </form>
-          </FormProvider> */}
-        {/* <Wizard slots={slots} steps={steps} form={form} /> */}
         <FormProvider {...form}>
           <Form>
             <Wizard
