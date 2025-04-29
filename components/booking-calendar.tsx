@@ -93,10 +93,6 @@ const BookingCalendar = ({ form }) => {
       <div className="w-full flex justify-center">
         <div className="flex flex-col space-y-3 ">
           <Skeleton className="h-[285px] w-[250px] rounded-xl" />
-          {/* <div className="space-y-2">
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
-          </div> */}
         </div>
       </div>
     );
@@ -107,7 +103,10 @@ const BookingCalendar = ({ form }) => {
         <Calendar
           mode="single"
           selected={selectedDate}
-          onSelect={handleSelectedDate}
+          onSelect={(date) => {
+            setValue("slotDate", { start: "", end: "" });
+            handleSelectedDate(date);
+          }}
           className=" rounded-md border shadow-xs"
           disabled={(date) =>
             !enabledDates.some(

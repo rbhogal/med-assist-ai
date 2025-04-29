@@ -34,6 +34,15 @@ export async function GET() {
     const rawSlots: TimeSlot[] = [];
     let cursor = new Date(timeMin);
     cursor = toZonedTime(cursor, timezone); // convert to PST
+
+    // Round cursor up to the next 30-minute increment
+    const minutes = cursor.getMinutes();
+    const remainder = minutes % 30;
+    if (remainder !== 0) {
+      const increment = 30 - remainder;
+      cursor.setMinutes(minutes + increment, 0, 0);
+    }
+
     const windowEnd = new Date(timeMax);
 
     // Align cursor to clinic opening if before working hours
@@ -93,7 +102,7 @@ export async function GET() {
       cursor.setMinutes(cursor.getMinutes() + slotDuration);
     }
 
-    // 4Group available slots by date into { date, slots[] } format
+    // Group available slots by date into { date, slots[] } format
     const grouped: Record<string, string[]> = {};
     for (const slot of rawSlots) {
       const [datePart, timePart] = slot.start.split("T");
