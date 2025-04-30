@@ -22,7 +22,7 @@ export const BookingCalendarProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [selectedDate, setSelectedDate] = useState<SlotDate | null>(null);
+  const [selectedDate, setSelectedDate] = useState<SlotDate | Date>(new Date());
   const [isSelected, setIsSelected] = useState<number | null>(null);
 
   const handleSelectedDate = (date) => {

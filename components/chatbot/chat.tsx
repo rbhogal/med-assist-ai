@@ -154,7 +154,6 @@ const Chat: React.FC = () => {
               </div>
             </div>
           ))}
-
           {isLoading && <ChatbotLoadingReply />}
           <div ref={messagesEndRef} />
         </div>

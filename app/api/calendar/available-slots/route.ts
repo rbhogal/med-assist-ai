@@ -20,7 +20,7 @@ export async function GET() {
     const timezone = "America/Los_Angeles";
     const timeMin = new Date().toISOString();
     const timeMax = new Date(
-      Date.now() + 28 * 24 * 60 * 60 * 1000
+      Date.now() + 90 * 24 * 60 * 60 * 1000
     ).toISOString();
 
     // Define clinic working hours (24-hour format)

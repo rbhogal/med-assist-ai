@@ -9,15 +9,45 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ZodObject, ZodRawShape } from "zod";
+import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
-export function Wizard({ steps, form, onSubmit, ref }) {
+export interface WizardHandle {
+  goNext: () => void;
+  goBack: () => void;
+  submit: () => void;
+}
+
+export interface WizardStep {
+  id: string;
+  title: string;
+  schema: ZodObject<ZodRawShape> | null;
+  content: React.ReactNode;
+}
+
+export interface WizardProps<T extends FieldValues> {
+  steps: WizardStep[];
+  form: UseFormReturn<T>;
+  onSubmit: (data: T) => void;
+  ref: React.Ref<WizardHandle>;
+}
+
+export function Wizard<T extends FieldValues>({
+  steps,
+  form,
+  onSubmit,
+  ref,
+}: WizardProps<T>) {
   const [currentStep, setCurrentStep] = useState(0);
   const { trigger } = form;
 
   const handleNext = async () => {
     const currentStepSchema = steps[currentStep].schema;
-    const fields = Object.keys(currentStepSchema.shape);
-    const isValid = await trigger(fields as any, { shouldFocus: true });
+    const fields: Path<T> | Path<T>[] | readonly Path<T>[] | undefined =
+      currentStepSchema
+        ? (Object.keys(currentStepSchema.shape) as Path<T>[])
+        : [];
+    const isValid = await trigger(fields, { shouldFocus: true });
 
     if (isValid) {
       setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));

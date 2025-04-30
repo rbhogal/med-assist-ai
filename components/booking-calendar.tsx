@@ -39,34 +39,6 @@ const BookingCalendar = ({ form }) => {
 
     setIsSelected(idx);
     setValue("slotDate", { start, end }, { shouldValidate: false });
-
-    return;
-    try {
-      const resp = await fetch("/api/calendar/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: "Name",
-          email: "name@example.com",
-          slot: {
-            start,
-            end,
-          },
-        }),
-      });
-      const data = resp.json();
-      console.log({ respData: data });
-      if (resp.ok) {
-        alert("Appointment Booked!");
-      } else {
-        throw Error;
-      }
-    } catch (err) {
-      console.log("Error booking:", err);
-      alert("Something went wrong. Try again.");
-    }
   };
 
   useEffect(() => {
@@ -90,9 +62,14 @@ const BookingCalendar = ({ form }) => {
 
   if (isLoading)
     return (
-      <div className="w-full flex justify-center">
-        <div className="flex flex-col space-y-3 ">
+      <div className="w-full flex flex-col items-center gap-8">
+        <div className="flex flex-col">
           <Skeleton className="h-[285px] w-[250px] rounded-xl" />
+        </div>
+        <div className="w-full grid grid-cols-2 mt-7 gap-2">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Skeleton key={i} className="h-11 w-full" />
+          ))}
         </div>
       </div>
     );
@@ -115,7 +92,6 @@ const BookingCalendar = ({ form }) => {
           }
         />
       </div>
-
       <div className="w-full flex flex-col items-center">
         <div className="flex w-full flex-col gap-4 max-w-3xl">
           {selectedDate && (
