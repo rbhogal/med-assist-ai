@@ -1,13 +1,5 @@
 import { createContext, SetStateAction, useContext, useState } from "react";
-
-// TODO: store typings in separate file
-type BookingContextType = {
-  selectedDate: Date | undefined;
-  setSelectedDate: (date: Date) => void;
-  isSelected: number | null;
-  setIsSelected: (val: number | null) => void;
-  handleSelectedDate: (date: Date | undefined) => void;
-};
+import { BookingContextType } from "@/types/booking";
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
 

@@ -1,16 +1,9 @@
 import { NextResponse } from "next/server";
-import { getBusyTimes } from "@/lib/google/utils";
 import { format, toZonedTime } from "date-fns-tz";
 
-/**
- * A time slot interval with ISO start/end
- */
-export type TimeSlot = {
-  date: any;
-  slots: any;
-  start: string;
-  end: string;
-};
+import { getBusyTimes } from "@/lib/google/utils";
+
+import { SlotRange } from "@/types/booking";
 
 /**
  * GET /api/available-slots
@@ -33,7 +26,7 @@ export async function GET() {
 
     // Generate available slots (30-min increments) within working hours
     const slotDuration = 30; // minutes
-    const rawSlots: TimeSlot[] = [];
+    const rawSlots: SlotRange[] = [];
     let cursor = new Date(timeMin);
     cursor = toZonedTime(cursor, timezone); // convert to PST
 

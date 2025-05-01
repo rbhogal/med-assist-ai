@@ -1,52 +1,30 @@
 "use client";
-import { BookingCalendar } from "@/components/booking-calendar";
+
 import { useRef, useState } from "react";
-
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { BookingCalendarProvider } from "@/app/context/BookingContext";
-import { Wizard, WizardHandle, WizardStep } from "@/components/wizard/wizard";
+import { BookingCalendar } from "@/components/wizard/steps/booking-calendar";
 import { PersonalInfoStep } from "@/components/wizard/steps/personal-info-step";
+import { Wizard } from "@/components/wizard/wizard";
+import { ConfirmationStep } from "@/components/wizard/steps/confirmation-step";
 
-const calenderSchema = z.object({
-  slotDate: z
-    .object({
-      start: z.string(),
-      end: z.string(),
-    })
-    .refine((data) => data.start && data.end, {
-      message: "Please select a date and time.",
-    }),
-});
-const contactSchema = z.object({
-  firstName: z.string().min(2, { message: "First name is required" }),
-  lastName: z.string().min(2, { message: "Last name is required" }),
-  email: z.string().email({ message: "Invalid email" }),
-});
-
-export const FormSchema = z.object({
-  ...calenderSchema.shape,
-  ...contactSchema.shape,
-});
-
-export type BookingFormData = z.infer<typeof FormSchema>;
-
-type FormData = {
-  slotDate: {
-    start: string;
-    end: string;
-  };
-  firstName: string;
-  lastName: string;
-  email: string;
-};
-
-type Steps = WizardStep[];
+import {
+  BookingFormData,
+  calenderSchema,
+  contactSchema,
+  FormSchema,
+  Steps,
+  FormData,
+} from "@/types/booking";
+import { WizardHandle } from "@/types/wizard";
 
 export default function Booking() {
   const wizardRef = useRef<WizardHandle>(null);
-  const [calenderEventLink, setCalenderEventLink] = useState(undefined);
+  const [calenderEventLink, setCalenderEventLink] = useState<
+    string | undefined
+  >(undefined);
 
   const form = useForm<BookingFormData>({
     resolver: zodResolver(FormSchema),
@@ -76,21 +54,7 @@ export default function Booking() {
       id: "confirmation",
       title: "Appointment Confirmed! 🎉",
       schema: null,
-      content: (
-        <div className="flex flex-col">
-          <p>{`We've booked your appointment, you're all set. See you soon!`}</p>
-          <p className="pt-6">
-            <a
-              className="text-blue-500  hover:text-blue-600 font-semibold"
-              target="_blank"
-              rel="noopener noreferrer"
-              href={calenderEventLink}
-            >
-              Click here to add the appointment to your google calender
-            </a>
-          </p>
-        </div>
-      ),
+      content: <ConfirmationStep url={calenderEventLink} />,
     },
   ];
 

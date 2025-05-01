@@ -1,13 +1,15 @@
 "use client";
-import { Calendar } from "@/components/ui/calendar";
 
-import { FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { useBookingCalendar } from "@/app/context/BookingContext";
 import { useEffect, useState } from "react";
-import { TimeSlot } from "@/app/api/calendar/available-slots/route";
-import { Skeleton } from "./ui/skeleton";
-import { BookingFormData } from "@/app/demo/booking/page";
 import { UseFormReturn } from "react-hook-form";
+
+import { useBookingCalendar } from "@/app/context/BookingContext";
+
+import { Calendar } from "@/components/ui/calendar";
+import { FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Skeleton } from "@/components/ui/skeleton";
+
+import { BookingFormData, TimeSlot } from "@/types/booking";
 
 type BookingCalendarProps = {
   form: UseFormReturn<BookingFormData>;
@@ -18,34 +20,17 @@ const BookingCalendar = ({ form }: BookingCalendarProps) => {
     useBookingCalendar();
   const [isLoading, setIsLoading] = useState(true);
   const [slots, setSlots] = useState<TimeSlot[]>([]);
-
   const enabledDates = slots.map(({ date }) => {
     const [year, month, day] = date.split("-").map(Number);
     return new Date(year, month - 1, day); // monthIndex is 0‑based
   });
-
   const { setValue } = form;
-
   const slotsForSelectedDate = slots.filter((slot) => {
     if (!selectedDate) return false;
     const [y, m, d] = slot.date.split("-").map(Number);
     const slotDay = new Date(y, m - 1, d); // local midnight of that date
     return slotDay.toDateString() === selectedDate.toDateString();
   });
-
-  const handleTimeSelect = async (slotDate: Date, idx: number) => {
-    if (isSelected === idx) {
-      setIsSelected(null);
-      setValue("slotDate", { start: "", end: "" });
-      return;
-    }
-
-    const start = slotDate.toISOString();
-    const end = new Date(slotDate.getTime() + 30 * 60 * 1000).toISOString(); // +30 mins
-
-    setIsSelected(idx);
-    setValue("slotDate", { start, end }, { shouldValidate: false });
-  };
 
   useEffect(() => {
     const fetchAvailableSlots = async () => {
@@ -65,6 +50,20 @@ const BookingCalendar = ({ form }: BookingCalendarProps) => {
 
     fetchAvailableSlots();
   }, []);
+
+  const handleTimeSelect = async (slotDate: Date, idx: number) => {
+    if (isSelected === idx) {
+      setIsSelected(null);
+      setValue("slotDate", { start: "", end: "" });
+      return;
+    }
+
+    const start = slotDate.toISOString();
+    const end = new Date(slotDate.getTime() + 30 * 60 * 1000).toISOString(); // +30 mins
+
+    setIsSelected(idx);
+    setValue("slotDate", { start, end }, { shouldValidate: false });
+  };
 
   if (isLoading)
     return (

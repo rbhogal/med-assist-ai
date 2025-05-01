@@ -1,6 +1,8 @@
 "use client";
 
 import { useImperativeHandle, useState } from "react";
+import { FieldValues, Path } from "react-hook-form";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,28 +11,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ZodObject, ZodRawShape } from "zod";
-import { FieldValues, Path, UseFormReturn } from "react-hook-form";
 
-export interface WizardHandle {
-  goNext: () => void;
-  goBack: () => void;
-  submit: () => void;
-}
-
-export interface WizardStep {
-  id: string;
-  title: string;
-  schema: ZodObject<ZodRawShape> | null;
-  content: React.ReactNode;
-}
-
-export interface WizardProps<T extends FieldValues> {
-  steps: WizardStep[];
-  form: UseFormReturn<T>;
-  onSubmit: (data: T) => void;
-  ref: React.Ref<WizardHandle>;
-}
+import { WizardProps } from "@/types/wizard";
 
 export function Wizard<T extends FieldValues>({
   steps,

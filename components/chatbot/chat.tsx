@@ -15,11 +15,6 @@ interface Message {
   availableTimes?: [];
 }
 
-interface Chat {
-  role: string;
-  content: string;
-}
-
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -117,7 +112,7 @@ const Chat: React.FC = () => {
         <div className="max-w-3xl mx-auto ">
           {messages.length === 0 && !isPageLoading && (
             <>
-              <h1 className="font-bold text-2xl sm:text-3xl absolute bottom-12 left-1/2  transform -translate-x-1/2">
+              <h1 className="font-bold text-2xl sm:text-3xl absolute bottom-12 left-1/2  transform -translate-x-1/2 whitespace-nowrap">
                 What can I assist with?
               </h1>
               {/* <Button className="absolute bottom-4 mx-4 bg-blue-500 text-white px-5 py-2 rounded-full cursor-pointer shadow-xs  transition-all text-sm font-semibold">
