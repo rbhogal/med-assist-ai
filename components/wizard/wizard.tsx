@@ -21,7 +21,7 @@ export function Wizard<T extends FieldValues>({
   ref,
 }: WizardProps<T>) {
   const [currentStep, setCurrentStep] = useState(0);
-  const { trigger } = form;
+  const { trigger, formState } = form;
 
   const handleNext = async () => {
     const currentStepSchema = steps[currentStep].schema;
@@ -72,7 +72,7 @@ export function Wizard<T extends FieldValues>({
               type="button"
               variant="outline"
               onClick={handlePrevious}
-              disabled={currentStep === 0}
+              disabled={currentStep === 0 || formState.isSubmitting}
               className="cursor-pointer"
             >
               Previous
@@ -83,8 +83,9 @@ export function Wizard<T extends FieldValues>({
               className="cursor-pointer"
               type="button"
               onClick={form.handleSubmit(onSubmit)}
+              disabled={formState.isSubmitting}
             >
-              Submit
+              {formState.isSubmitting ? "Submitting..." : "Submit"}
             </Button>
           )}
           {currentStep < steps.length - 2 && (

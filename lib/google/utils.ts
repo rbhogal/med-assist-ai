@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { format, toZonedTime } from "date-fns-tz";
+import { google } from "googleapis";
 import path from "path";
 
-import { google } from "googleapis";
+import { SlotRange } from "@/types/booking";
 
 interface AvailabilityOptions {
   durationMinutes?: number;
@@ -22,6 +24,91 @@ const auth = new google.auth.GoogleAuth({
   scopes: SCOPES,
 });
 const calendar = google.calendar({ version: "v3", auth });
+
+export async function generateAvailableSlots(
+  timeMin: string,
+  timeMax: string,
+  timezone: string,
+  workingHours: { startHour: number; endHour: number }
+): Promise<SlotRange[]> {
+  // fetch busy times from google calender
+  const busy = await getBusyTimes(timeMin, timeMax, timezone);
+
+  // Generate available slots (30-min increments) within working hours
+  const slotDuration = 30; // minutes
+  const rawSlots: SlotRange[] = [];
+  let cursor = new Date(timeMin);
+  cursor = toZonedTime(cursor, timezone); // convert to PST
+
+  // Round cursor up to the next 30-minute increment
+  const minutes = cursor.getMinutes();
+  const remainder = minutes % 30;
+  if (remainder !== 0) {
+    const increment = 30 - remainder;
+    cursor.setMinutes(minutes + increment, 0, 0);
+  }
+
+  const windowEnd = new Date(timeMax);
+
+  // Align cursor to clinic opening if before working hours
+  if (cursor.getHours() < workingHours.startHour) {
+    cursor.setHours(workingHours.startHour, 0, 0, 0);
+  }
+
+  // Advance through each day in the window
+  while (cursor < windowEnd) {
+    const hour = cursor.getHours();
+    const dayOfWeek = cursor.getDay();
+
+    // Skip weekends (0 = Sunday, 6 = Saturday)
+    if (dayOfWeek === 0 || dayOfWeek === 6) {
+      cursor.setDate(cursor.getDate() + 1);
+      cursor.setHours(workingHours.startHour, 0, 0, 0);
+      continue;
+    }
+
+    // If past clinic closing, jump to next day at opening
+    if (hour >= workingHours.endHour) {
+      cursor.setDate(cursor.getDate() + 1);
+      cursor.setHours(workingHours.startHour, 0, 0, 0);
+      continue;
+    }
+
+    // convert to PST
+    const next = new Date(cursor.getTime() + slotDuration * 60 * 1000);
+    const startISO = format(cursor, "yyyy-MM-dd'T'HH:mm:ssXXX", {
+      timeZone: timezone,
+    });
+    const endISO = format(next, "yyyy-MM-dd'T'HH:mm:ssXXX", {
+      timeZone: timezone,
+    });
+
+    // Skip slots that span outside working hours
+    if (next.getHours() >= workingHours.endHour && next.getMinutes() > 0) {
+      cursor.setDate(cursor.getDate() + 1);
+      cursor.setHours(workingHours.startHour, 0, 0, 0);
+      continue;
+    }
+
+    const zonedCursor = toZonedTime(cursor, timezone);
+    const zonedNext = toZonedTime(next, timezone);
+
+    const isBusy = busy.some(({ start, end }) => {
+      const busyStart = new Date(start);
+      const busyEnd = new Date(end);
+      return zonedCursor < busyEnd && zonedNext > busyStart;
+    });
+
+    if (!isBusy) {
+      rawSlots.push({ start: startISO, end: endISO });
+    }
+
+    // advance by slot duration
+    cursor.setMinutes(cursor.getMinutes() + slotDuration);
+  }
+
+  return rawSlots;
+}
 
 const createGoogleCalenderEvent = async () => {
   try {
