@@ -41,21 +41,12 @@ export async function POST(req: Request) {
       botReply = "MED ASSIST BOOK AN APPOINTMENT";
     }
 
-    // If user asks to book an appointment, send to scheduler
     if (
       botReply.trim() === "MED ASSIST BOOK AN APPOINTMENT" ||
       botReply.trim() === "Click here to book your appointment"
     ) {
       botReply = "Click here to book your appointment";
       url = "/demo/booking";
-      // 1) check e
-      // const { success, link, error } = await createGoogleCalenderEvent();
-      // if (success) {
-      //   botReply = "Your appointment has been booked!";
-      //   url = link;
-      // } else {
-      //   botReply = "Oops, something went wrong while booking your appointment.";
-      // }
     }
 
     return NextResponse.json({

@@ -1,12 +1,12 @@
 "use client";
 import { ChangeEvent, useState, useEffect, useRef, KeyboardEvent } from "react";
+import Link from "next/link";
 import { ArrowUp, SquarePen } from "lucide-react";
 
+import ChatbotLoadingReply from "./chatbot-loading-reply";
 import { Textarea } from "@/components/chatbot/textarea";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import ChatbotLoadingReply from "./chatbot-loading-reply";
-import Link from "next/link";
 
 interface Message {
   text: string;

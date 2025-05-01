@@ -1,4 +1,4 @@
-import { Activity, ClipboardPlus } from "lucide-react";
+import { ClipboardPlus } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,6 @@ export function LoginForm({
               className="flex flex-col items-center gap-2 font-medium"
             >
               <div className="flex size-8 items-center justify-center rounded-md">
-                {/* <Activity className="text-blue-600" /> */}
                 <ClipboardPlus className="text-blue-600" />
               </div>
               <span className="sr-only">MedAssist</span>
