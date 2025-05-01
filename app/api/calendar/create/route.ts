@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     const calendar = google.calendar({ version: "v3", auth });
 
     const event = {
-      summary: `Appointment with ${name}`,
+      summary: `${name} - Appointment`,
       location: "123 Demo St. AI City MA, 99999",
       description: `Booked by ${email}`,
       start: {

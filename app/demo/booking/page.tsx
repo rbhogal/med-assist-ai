@@ -30,6 +30,8 @@ export const FormSchema = z.object({
   ...contactSchema.shape,
 });
 
+export type BookingFormData = z.infer<typeof FormSchema>;
+
 type FormData = {
   slotDate: {
     start: string;
@@ -46,7 +48,7 @@ export default function Booking() {
   const wizardRef = useRef<WizardHandle>(null);
   const [calenderEventLink, setCalenderEventLink] = useState(undefined);
 
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<BookingFormData>({
     resolver: zodResolver(FormSchema),
     mode: "onChange",
     defaultValues: {

@@ -6,6 +6,8 @@ import { format, toZonedTime } from "date-fns-tz";
  * A time slot interval with ISO start/end
  */
 export type TimeSlot = {
+  date: any;
+  slots: any;
   start: string;
   end: string;
 };

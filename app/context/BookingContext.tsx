@@ -1,18 +1,12 @@
+import { createContext, SetStateAction, useContext, useState } from "react";
+
 // TODO: store typings in separate file
-
-import { createContext, useContext, useState } from "react";
-
-type SlotDate = {
-  start: string;
-  end: string;
-};
-
 type BookingContextType = {
-  selectedDate: SlotDate | null;
-  setSelectedDate: (date: SlotDate) => void;
+  selectedDate: Date | undefined;
+  setSelectedDate: (date: Date) => void;
   isSelected: number | null;
   setIsSelected: (val: number | null) => void;
-  handleSelectedDate: (date: SlotDate) => void;
+  handleSelectedDate: (date: Date | undefined) => void;
 };
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
@@ -22,10 +16,10 @@ export const BookingCalendarProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [selectedDate, setSelectedDate] = useState<SlotDate | Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [isSelected, setIsSelected] = useState<number | null>(null);
 
-  const handleSelectedDate = (date) => {
+  const handleSelectedDate = (date: SetStateAction<Date | undefined>) => {
     setIsSelected(null);
     setSelectedDate(date);
   };

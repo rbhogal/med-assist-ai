@@ -6,8 +6,14 @@ import { useBookingCalendar } from "@/app/context/BookingContext";
 import { useEffect, useState } from "react";
 import { TimeSlot } from "@/app/api/calendar/available-slots/route";
 import { Skeleton } from "./ui/skeleton";
+import { BookingFormData } from "@/app/demo/booking/page";
+import { UseFormReturn } from "react-hook-form";
 
-const BookingCalendar = ({ form }) => {
+type BookingCalendarProps = {
+  form: UseFormReturn<BookingFormData>;
+};
+
+const BookingCalendar = ({ form }: BookingCalendarProps) => {
   const { isSelected, setIsSelected, selectedDate, handleSelectedDate } =
     useBookingCalendar();
   const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +33,7 @@ const BookingCalendar = ({ form }) => {
     return slotDay.toDateString() === selectedDate.toDateString();
   });
 
-  const handleTimeSelect = async (slotDate, idx) => {
+  const handleTimeSelect = async (slotDate: Date, idx: number) => {
     if (isSelected === idx) {
       setIsSelected(null);
       setValue("slotDate", { start: "", end: "" });
@@ -100,27 +106,29 @@ const BookingCalendar = ({ form }) => {
                 Time shown in <span className="font-semibold">PT</span>
               </p>
               <div className="grid grid-cols-2 gap-2">
-                {slotsForSelectedDate[0]?.slots.map((slot, idx) => {
-                  const [hour, minute] = slot.split(":").map(Number);
-                  const slotDate = new Date(selectedDate);
-                  slotDate.setHours(hour, minute, 0, 0);
+                {slotsForSelectedDate[0]?.slots.map(
+                  (slot: string, idx: number) => {
+                    const [hour, minute] = slot.split(":").map(Number);
+                    const slotDate = new Date(selectedDate);
+                    slotDate.setHours(hour, minute, 0, 0);
 
-                  return (
-                    <button
-                      key={idx}
-                      type="button"
-                      className={`border rounded-md px-3 py-2 hover:bg-black hover:text-white cursor-pointer shadow-xs  ${
-                        isSelected === idx ? "bg-black text-white" : ""
-                      }`}
-                      onClick={() => handleTimeSelect(slotDate, idx)}
-                    >
-                      {slotDate.toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </button>
-                  );
-                })}
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        className={`border rounded-md px-3 py-2 hover:bg-black hover:text-white cursor-pointer shadow-xs  ${
+                          isSelected === idx ? "bg-black text-white" : ""
+                        }`}
+                        onClick={() => handleTimeSelect(slotDate, idx)}
+                      >
+                        {slotDate.toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </button>
+                    );
+                  }
+                )}
               </div>
             </>
           )}
