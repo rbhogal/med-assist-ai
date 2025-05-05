@@ -17,7 +17,7 @@ A friendly, AI-powered medical assistant chatbot built with Next.js, OpenAI GPT-
 - **UI Components**: Tailwind CSS + shadcn/ui
 
 
-## Planned Features
+## 🗓️ Planned Features
 - **Login** using Clerk for user authentication
 - **Admin Dashboard** to view patients and update incoming appointments
 - Store chat and appointment history using a Django Backend with PostgresSQL
