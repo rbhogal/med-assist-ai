@@ -15,12 +15,12 @@ interface AvailabilityOptions {
 
 const SCOPES = ["https://www.googleapis.com/auth/calendar"];
 const calendarId = process.env.GOOGLE_CALENDAR_ID!;
-const keyFilePath = path.join(
-  process.cwd(),
-  process.env.GOOGLE_SERVICE_ACCOUNT_PATH!
-);
+// const keyFilePath = path.join(
+//   process.cwd(),
+//   process.env.GOOGLE_SERVICE_ACCOUNT_PATH!
+// );
 const auth = new google.auth.GoogleAuth({
-  keyFile: keyFilePath,
+  credentials: JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON!),
   scopes: SCOPES,
 });
 const calendar = google.calendar({ version: "v3", auth });
