@@ -27,5 +27,5 @@ A friendly, AI-powered medical assistant chatbot built with Next.js, OpenAI GPT-
 ### 1. Clone the Repo
 
 ```bash
-git clone https://github.com/your-username/medassist-chatbot.git
+git clone https://github.com/rbhogal/medassist-chatbot.git
 cd medassist-chatbot
