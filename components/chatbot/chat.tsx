@@ -18,20 +18,6 @@ interface Message {
   availableTimes?: [];
 }
 
-function formatResetTime(resetTimestampMs: number): string {
-  const date = new Date(resetTimestampMs);
-
-  let hours = date.getHours();
-  const minutes = date.getMinutes();
-  const ampm = hours >= 12 ? "PM" : "AM";
-
-  hours = hours % 12;
-  hours = hours ? hours : 12; // hour 0 should be 12
-
-  const minutesStr = minutes.toString().padStart(2, "0");
-  return `${hours}:${minutesStr} ${ampm}`;
-}
-
 const Chat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
