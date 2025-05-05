@@ -22,10 +22,3 @@ A friendly, AI-powered medical assistant chatbot built with Next.js, OpenAI GPT-
 - **Admin Dashboard** to view patients and update incoming appointments
 - Store chat and appointment history using a Django Backend with PostgresSQL
 
-## 🚀 Getting Started
-
-### 1. Clone the Repo
-
-```bash
-git clone https://github.com/rbhogal/medassist-chatbot.git
-cd medassist-chatbot
