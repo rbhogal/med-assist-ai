@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
+import config from "@/config";
 import { FaqSystemPrompt } from "@/lib/faq";
+import { ratelimit } from "@/lib/rate-limiter";
 
 interface Message {
   role: "user" | "assistant" | "system";
@@ -13,7 +15,28 @@ const openai = new OpenAI({
 });
 
 export async function POST(req: Request) {
-  const IS_TEST = true;
+  if (config.useRateLimiting) {
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0] ||
+      req.headers.get("client-ip") ||
+      "anonymous";
+    const { success, limit, reset, remaining } = await ratelimit.limit(ip);
+
+    if (!success) {
+      return NextResponse.json(
+        { error: "Rate limit exceeded." },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": limit.toString(),
+            "X-RateLimit-Remaining": remaining.toString(),
+            "X-RateLimit-Reset": reset.toString(),
+          },
+        }
+      );
+    }
+  }
+
   let botReply = "";
   let url: string | undefined | null;
 
@@ -21,7 +44,9 @@ export async function POST(req: Request) {
     const { history } = await req.json();
     const chatHistory: Message[] = [...history];
 
-    if (!IS_TEST) {
+    if (config.useMockApi) {
+      botReply = "MED ASSIST BOOK AN APPOINTMENT"; // mock response
+    } else {
       const aiResp = await openai.chat.completions.create({
         model: "gpt-4",
         messages: [
@@ -34,11 +59,8 @@ export async function POST(req: Request) {
         ],
       });
 
-      console.log({ ai: aiResp.choices[0]?.message.content });
       botReply =
         aiResp.choices[0]?.message.content || `Sorry, I didn't get that.`;
-    } else {
-      botReply = "MED ASSIST BOOK AN APPOINTMENT";
     }
 
     if (

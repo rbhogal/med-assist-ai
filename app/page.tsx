@@ -13,7 +13,7 @@ export default function LandingPage() {
         <ClipboardPlus className="text-blue-600 w-6 h-6" />
       </div>
       <Link className="mx-auto" href="/demo">
-        <Button className="cursor-pointer">Go to chat</Button>
+        <Button className="cursor-pointer">Try Demo</Button>
       </Link>
     </div>
   );

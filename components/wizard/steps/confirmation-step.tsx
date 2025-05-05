@@ -5,8 +5,8 @@ interface ConfirmationStepProps {
 export const ConfirmationStep = ({ url }: ConfirmationStepProps) => {
   return (
     <div className="flex flex-col">
-      <p>{`We've booked your appointment, you're all set. See you soon!`}</p>
-      <p className="pt-6">
+      <p>{`Thanks for trying the demo!`}</p>
+      <p className="pt-2">
         <a
           className="text-blue-500  hover:text-blue-600 font-semibold"
           target="_blank"

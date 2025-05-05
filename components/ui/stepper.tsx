@@ -7,7 +7,6 @@ export default function Stepper({ steps, form }) {
 
   const goNext = async () => {
     const isDateValid = await form.trigger(["slotDate"]);
-    console.log(isDateValid);
     if (!isDateValid) return;
     if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
   };

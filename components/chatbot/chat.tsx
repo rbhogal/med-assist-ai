@@ -1,12 +1,15 @@
 "use client";
+
 import { ChangeEvent, useState, useEffect, useRef, KeyboardEvent } from "react";
 import Link from "next/link";
-import { ArrowUp, SquarePen } from "lucide-react";
+import { ArrowUp, Info, SquarePen } from "lucide-react";
+import { toast } from "sonner";
 
 import ChatbotLoadingReply from "./chatbot-loading-reply";
 import { Textarea } from "@/components/chatbot/textarea";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 interface Message {
   text: string;
@@ -54,25 +57,50 @@ const Chat: React.FC = () => {
   const handleSendMessage = async () => {
     if (!input.trim()) return;
 
-    // Add user's message to chat history
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { text: input, sender: "user" },
-    ]);
-
-    // TODO: Temporarily store chat history in localStorage for demo purposes. Replace with backend storage later.
-    const chatHistory = JSON.parse(localStorage.getItem("chatHistory") || "[]");
-    chatHistory.push({ role: "user", content: input });
-    localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
-
     setIsLoading(true);
 
     try {
+      // Add user's message to chat history
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: input, sender: "user" },
+      ]);
+
+      // TODO: Temporarily store chat history in localStorage for demo purposes. Replace with backend storage later.
+      const chatHistory = JSON.parse(
+        localStorage.getItem("chatHistory") || "[]"
+      );
+      chatHistory.push({ role: "user", content: input });
+      localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+
       const response = await fetch("/api/openai", {
         method: "POST",
         body: JSON.stringify({ history: chatHistory }),
         headers: { "Content-Type": "application/json" },
       });
+
+      if (response.status === 429) {
+        const remaining = response.headers.get("X-RateLimit-Remaining");
+        const reset = response.headers.get("X-RateLimit-Reset");
+        const data = await response.json();
+
+        if (remaining !== null && reset !== null) {
+          const resetTime = new Date(parseInt(reset) * 1000);
+          const minutes = Math.round(
+            (resetTime.getTime() - Date.now()) / 60000
+          );
+
+          toast.error(
+            data.error +
+              `${" "} Try again in ${minutes} minutes${
+                minutes !== 1 ? "" : "s"
+              }`
+          );
+          setIsLoading(false);
+          return;
+        }
+      }
+
       const data = await response.json();
 
       // Push AI response to the chat
@@ -111,14 +139,22 @@ const Chat: React.FC = () => {
       <ScrollArea className=" px-4 h-[calc(100vh-200px)] w-full m-0">
         <div className="max-w-3xl mx-auto ">
           {messages.length === 0 && !isPageLoading && (
-            <>
-              <h1 className="font-bold text-2xl sm:text-3xl absolute bottom-12 left-1/2  transform -translate-x-1/2 whitespace-nowrap">
+            <div>
+              <h1 className="font-bold text-2xl sm:text-3xl absolute bottom-20  left-1/2  transform -translate-x-1/2 whitespace-nowrap">
                 What can I assist with?
               </h1>
               {/* <Button className="absolute bottom-4 mx-4 bg-blue-500 text-white px-5 py-2 rounded-full cursor-pointer shadow-xs  transition-all text-sm font-semibold">
                 Book Appointment
               </Button> */}
-            </>
+
+              <Alert className="absolute bottom-4 w-fit  left-1/2  transform -translate-x-1/2 whitespace-nowrap ">
+                <Info className="h-4 w-4" />
+                {/* <AlertTitle>Welcome to the demo!</AlertTitle> */}
+                <AlertDescription>
+                  You can send up to 20 messages every 8 hrs
+                </AlertDescription>
+              </Alert>
+            </div>
           )}
           {messages.map((msg, index) => (
             <div
@@ -165,7 +201,7 @@ const Chat: React.FC = () => {
             className="flex-grow resize-none text-gray-800 max-w-3xl"
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Book, reschedule, or inquire about services."
+            placeholder="Book an appointment or inquire about services."
             rows={2}
             value={input}
           />

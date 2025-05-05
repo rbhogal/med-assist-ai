@@ -24,7 +24,7 @@ const BookingCalendar = ({ form }: BookingCalendarProps) => {
     const [year, month, day] = date.split("-").map(Number);
     return new Date(year, month - 1, day); // monthIndex is 0‑based
   });
-  const { setValue } = form;
+  const { setValue, trigger } = form;
   const slotsForSelectedDate = slots.filter((slot) => {
     if (!selectedDate) return false;
     const [y, m, d] = slot.date.split("-").map(Number);
@@ -55,6 +55,7 @@ const BookingCalendar = ({ form }: BookingCalendarProps) => {
     if (isSelected === idx) {
       setIsSelected(null);
       setValue("slotDate", { start: "", end: "" });
+      await trigger(["slotDate"], { shouldFocus: true });
       return;
     }
 
@@ -62,7 +63,7 @@ const BookingCalendar = ({ form }: BookingCalendarProps) => {
     const end = new Date(slotDate.getTime() + 30 * 60 * 1000).toISOString(); // +30 mins
 
     setIsSelected(idx);
-    setValue("slotDate", { start, end }, { shouldValidate: false });
+    setValue("slotDate", { start, end }, { shouldValidate: true });
   };
 
   if (isLoading)

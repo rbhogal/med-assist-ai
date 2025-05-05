@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     const event = {
       summary: `${name} - Demo Appointment`,
       location: "123 Demo St. AI City MA, 99999",
-      description: `Booked by ${email}. Thanks for trying the demo!`,
+      description: `Booked by ${email}`,
       start: {
         dateTime: slot.start,
         timeZone: "America/Los_Angeles",
