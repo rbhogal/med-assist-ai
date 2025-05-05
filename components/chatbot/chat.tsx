@@ -9,13 +9,27 @@ import ChatbotLoadingReply from "./chatbot-loading-reply";
 import { Textarea } from "@/components/chatbot/textarea";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Alert, AlertDescription } from "../ui/alert";
 
 interface Message {
   text: string;
   sender: "user" | "bot";
   url?: string;
   availableTimes?: [];
+}
+
+function formatResetTime(resetTimestampMs: number): string {
+  const date = new Date(resetTimestampMs);
+
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? "PM" : "AM";
+
+  hours = hours % 12;
+  hours = hours ? hours : 12; // hour 0 should be 12
+
+  const minutesStr = minutes.toString().padStart(2, "0");
+  return `${hours}:${minutesStr} ${ampm}`;
 }
 
 const Chat: React.FC = () => {
@@ -82,21 +96,13 @@ const Chat: React.FC = () => {
       if (response.status === 429) {
         const remaining = response.headers.get("X-RateLimit-Remaining");
         const reset = response.headers.get("X-RateLimit-Reset");
-        const data = await response.json();
-
+        // const data = await response.json();
         if (remaining !== null && reset !== null) {
-          const resetTime = new Date(parseInt(reset) * 1000);
-          const minutes = Math.round(
-            (resetTime.getTime() - Date.now()) / 60000
-          );
+          // const displayTime = formatResetTime(parseInt(reset));
 
-          toast.error(
-            data.error +
-              `${" "} Try again in ${minutes} minutes${
-                minutes !== 1 ? "" : "s"
-              }`
-          );
+          toast.error(`You've reached your limit. Try again in 8 hrs.`);
           setIsLoading(false);
+          setInput("");
           return;
         }
       }
@@ -143,13 +149,8 @@ const Chat: React.FC = () => {
               <h1 className="font-bold text-2xl sm:text-3xl absolute bottom-20  left-1/2  transform -translate-x-1/2 whitespace-nowrap">
                 What can I assist with?
               </h1>
-              {/* <Button className="absolute bottom-4 mx-4 bg-blue-500 text-white px-5 py-2 rounded-full cursor-pointer shadow-xs  transition-all text-sm font-semibold">
-                Book Appointment
-              </Button> */}
-
               <Alert className="absolute bottom-4 w-fit  left-1/2  transform -translate-x-1/2 whitespace-nowrap ">
                 <Info className="h-4 w-4" />
-                {/* <AlertTitle>Welcome to the demo!</AlertTitle> */}
                 <AlertDescription>
                   You can send up to 20 messages every 8 hrs
                 </AlertDescription>
