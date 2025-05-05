@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { format, toZonedTime } from "date-fns-tz";
 import { google } from "googleapis";
-import path from "path";
+// import path from "path";
 
 import { SlotRange } from "@/types/booking";
 
