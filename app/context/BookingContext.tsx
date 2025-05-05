@@ -8,7 +8,9 @@ export const BookingCalendarProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    new Date()
+  );
   const [isSelected, setIsSelected] = useState<number | null>(null);
 
   const handleSelectedDate = (date: SetStateAction<Date | undefined>) => {
