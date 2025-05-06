@@ -1,6 +1,9 @@
 # MedAssist Chatbot Demo
 
-A friendly, AI-powered medical assistant chatbot built with Next.js, OpenAI GPT-4, and Upstash Redis for rate limiting. It helps answer user's frequently asked questions related to a primary care clinic and guides them to book appointments when needed. Can book appointments through the booking page. 
+A friendly, AI-powered medical assistant chatbot built with Next.js, OpenAI GPT-4, and Upstash Redis for rate limiting. It helps answer user's frequently asked questions related to a primary care clinic and guides them to book appointments when needed. Can book appointments through the booking page. Can be used to integrate with existing EHRs appointment bookings. 
+
+### Try Demo: 
+https://med-assist-ai.vercel.app/
 
 ## ✨ Features
 
