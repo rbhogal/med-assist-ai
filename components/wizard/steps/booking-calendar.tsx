@@ -19,6 +19,7 @@ const BookingCalendar = ({ form }: BookingCalendarProps) => {
   const { isSelected, setIsSelected, selectedDate, handleSelectedDate } =
     useBookingCalendar();
   const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const enabledDates = slots.map(({ date }) => {
     const [year, month, day] = date.split("-").map(Number);
@@ -31,7 +32,6 @@ const BookingCalendar = ({ form }: BookingCalendarProps) => {
     const slotDay = new Date(y, m - 1, d); // local midnight of that date
     return slotDay.toDateString() === selectedDate.toDateString();
   });
-
   useEffect(() => {
     const fetchAvailableSlots = async () => {
       setIsLoading(true);
@@ -41,8 +41,10 @@ const BookingCalendar = ({ form }: BookingCalendarProps) => {
         if (!resp.ok) throw new Error("Failed to fetch available slots");
         const data = await resp.json();
         setSlots(data);
+        setFetchError(false); // reset error if successful
       } catch (err) {
         console.log({ Error: err });
+        setFetchError(true);
       } finally {
         setIsLoading(false);
       }
@@ -102,9 +104,16 @@ const BookingCalendar = ({ form }: BookingCalendarProps) => {
         <div className="flex w-full flex-col gap-4 max-w-3xl">
           {selectedDate && (
             <>
-              <p className="mt-6">
-                Time shown in <span className="font-semibold">PT</span>
-              </p>
+              {!fetchError && slotsForSelectedDate.length !== 0 && (
+                <p className="mt-6">
+                  Time shown in <span className="font-semibold">PT</span>
+                </p>
+              )}
+              {fetchError && (
+                <p className="mt-6 text-red-600 font-medium">
+                  No bookings available right now. Please try again later.
+                </p>
+              )}
               <div className="grid grid-cols-2 gap-2">
                 {slotsForSelectedDate[0]?.slots.map(
                   (slot: string, idx: number) => {
