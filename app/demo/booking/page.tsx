@@ -78,17 +78,16 @@ export default function Booking() {
           },
         }),
       });
-      const respData = await resp.json();
-      setCalenderEventLink(respData.link);
-      console.log(respData.link);
 
       if (!resp.ok) throw Error;
+
+      const respData = await resp.json();
+      setCalenderEventLink(respData.link);
+      wizardRef.current?.goNext();
     } catch (err) {
       console.log("Error booking:", err);
-      alert("Something went wrong. Try again.");
+      alert("Something went wrong trying too book appointment. Try again.");
     }
-
-    wizardRef.current?.goNext();
   };
 
   return (

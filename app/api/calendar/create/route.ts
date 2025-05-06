@@ -1,29 +1,9 @@
 import { NextResponse } from "next/server";
-import { google } from "googleapis";
-import path from "path";
-
-const SCOPES = ["https://www.googleapis.com/auth/calendar"];
-const calendarId = process.env.GOOGLE_CALENDAR_ID;
+import { calendar, calendarId } from "@/lib/google/utils";
 
 export async function POST(req: Request) {
-  const googleServiceAccountPath = process.env.GOOGLE_SERVICE_ACCOUNT_PATH;
-
-  if (!googleServiceAccountPath) {
-    throw new Error(
-      "Missing GOOGLE_SERVICE_ACCOUNT_PATH in environment variables."
-    );
-  }
-
   try {
     const { name, email, slot } = await req.json();
-    const keyFilePath = path.join(process.cwd(), googleServiceAccountPath);
-
-    const auth = new google.auth.GoogleAuth({
-      keyFile: keyFilePath,
-      scopes: SCOPES,
-    });
-
-    const calendar = google.calendar({ version: "v3", auth });
 
     const event = {
       summary: `${name} - Demo Appointment`,
