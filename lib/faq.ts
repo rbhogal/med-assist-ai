@@ -53,7 +53,7 @@ const faqs = [
   },
   {
     question: "What should I bring to my appointment?",
-    answer: "Your ID, and insurance card or information if you have it.",
+    answer: "Your ID and insurance card if you have it.",
   },
   {
     question: "How do I get my test results?",
