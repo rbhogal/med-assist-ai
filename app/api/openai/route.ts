@@ -48,7 +48,7 @@ export async function POST(req: Request) {
       botReply = "MED ASSIST BOOK AN APPOINTMENT"; // mock response
     } else {
       const aiResp = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4.1",
         messages: [
           { role: "system", content: FaqSystemPrompt },
           {
