@@ -17,7 +17,8 @@ const faqs = [
   },
   {
     question: "What insurances do you accept?",
-    answer: "Most major insurances are accepted. Call us for more details.",
+    answer:
+      "Most major insurances are accepted. Call us at 555-555-5555 for more details.",
   },
   {
     question: "What is the phone number to the clinic?",
@@ -72,7 +73,7 @@ const faqs = [
   {
     question: "Do you accept walk-ins?",
     answer:
-      "Yes! Most walk-ins can be accommodated. Please give us a call for more details.",
+      "Yes! Most walk-ins can be accommodated. Please give us a call at 555-555-5555 for more details.",
   },
   {
     question: "I have an emergency, is there a doctor available?",
@@ -82,7 +83,7 @@ const faqs = [
   {
     question: "Im late to my appointment is that a problem?",
     answer:
-      "Please give us a call ahead if you suspect you are going to be late. For tardiness longer than 20 minutes please reschedule, otherwise we will try to accommodate you.",
+      "Please give us a call ahead at if you suspect you are going to be late. For tardiness longer than 20 minutes please reschedule, otherwise we will try to accommodate you. Our number is 555-555-5555",
   },
   {
     question: "Are you open during holidays?",
