@@ -27,5 +27,5 @@ https://med-assist-ai.vercel.app/
 ## 🗓️ Planned Features
 - **Login** using Clerk for user authentication
 - **Admin Dashboard** to view patients and update incoming appointments
-- Store chat and appointment history using a Django Backend with PostgresSQL
+- Store chat and appointment history using a Django Backend with PostgreSQL
 
