@@ -15,7 +15,7 @@ https://med-assist-ai.vercel.app/
 - Appointment Booking Calender (via Google Calender API)
 - **Rate limiting** with Upstash Redis (e.g., 10 requests per 2 hours)
 
-## 📦 Tech Stack
+## 🛠️ Tech Stack
 
 - **Frontend**: Next.js
 - **Backend**: Server Actions / API routes
