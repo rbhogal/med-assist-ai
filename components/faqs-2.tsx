@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import Link from "next/link";
+// import Link from "next/link";
 
 export default function FAQsTwo() {
   const faqItems = [
