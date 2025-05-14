@@ -108,7 +108,7 @@ export default function HeroSection() {
                   as="h1"
                   className="mt-8 text-balance text-6xl md:text-7xl lg:mt-16 xl:text-[5.25rem]"
                 >
-                  Your Clinic's AI-Powered Front Desk
+                  Your Clinic&apos;s AI-Powered Front Desk
                 </TextEffect>
                 <TextEffect
                   per="line"
