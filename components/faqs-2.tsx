@@ -89,12 +89,12 @@ export default function FAQsTwo() {
             ))}
           </Accordion>
 
-          <p className="text-muted-foreground mt-6 px-8">
+          {/* <p className="text-muted-foreground mt-6 px-8">
             Can&apos;t find what you&apos;re looking for? Contact our{" "}
             <Link href="#" className="text-primary font-medium hover:underline">
               customer support team
             </Link>
-          </p>
+          </p> */}
         </div>
       </div>
     </section>

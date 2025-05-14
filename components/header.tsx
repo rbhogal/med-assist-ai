@@ -96,7 +96,10 @@ export const HeroHeader = () => {
                   asChild
                   variant="outline"
                   size="sm"
-                  className={cn(isScrolled && "lg:hidden")}
+                  className={cn(
+                    isScrolled && "lg:hidden",
+                    "pointer-events-none opacity-50"
+                  )}
                 >
                   <Link href="/login">
                     <span>Login</span>
@@ -105,7 +108,10 @@ export const HeroHeader = () => {
                 <Button
                   asChild
                   size="sm"
-                  className={cn(isScrolled && "lg:hidden")}
+                  className={cn(
+                    isScrolled && "lg:hidden",
+                    "pointer-events-none opacity-50"
+                  )}
                 >
                   <Link href="/login">
                     <span>Sign Up</span>
