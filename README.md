@@ -11,7 +11,7 @@ https://med-assist-ai.vercel.app/
 
 ## ✨ Demo Features
 
-- GPT-4.1 powered chatbot answering FAQs (via OpenAI API)
+- ChatGPT-4.1 powered chatbot answering FAQs (via OpenAI API)
 - Appointment Booking Calender (via Google Calender API)
 - **Rate limiting** with Upstash Redis (e.g., 10 requests per 2 hours)
 
@@ -19,7 +19,7 @@ https://med-assist-ai.vercel.app/
 
 - **Frontend**: Next.js
 - **Backend**: Server Actions / API routes
-- **AI**: OpenAI GPT-4 API
+- **AI**: OpenAI GPT-4.1 API
 - **Rate Limiting**: [Upstash Redis](https://upstash.com/)
 - **UI Components**: Tailwind CSS + shadcn/ui
 
