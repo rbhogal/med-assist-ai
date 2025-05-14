@@ -20,7 +20,7 @@ export default function FAQsTwo() {
       id: "item-2",
       question: "Is patient data secure?",
       answer:
-        "HIPAA compliance is only required if collecting a reason for visit. For that reason we currently only collect name, email, and phone number. Currently working on ensuring future features are HIPAA compliant.",
+        " HIPAA compliance is only required if we collect sensitive health information like a reason for visit. To avoid that, we currently only collect name, email, and phone number. That said, we're actively working toward full HIPAA compliance.",
     },
     {
       id: "item-3",
@@ -50,7 +50,7 @@ export default function FAQsTwo() {
       id: "item-7",
       question: "How much does it cost?",
       answer:
-        "We’re still finalizing pricing. Join the waitlist or book a call, and we’ll reach out when it’s ready.",
+        "We’re still finalizing pricing. Join the waitlist and we’ll reach out when it’s ready.",
     },
   ];
 
