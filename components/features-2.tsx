@@ -30,8 +30,8 @@ export default function Features() {
 
             <CardContent>
               <p className="text-sm">
-                Tailor the chatbot to match your clinic's workflows, tone, and
-                branding.
+                Tailor the chatbot to match your clinic&apos;s workflows, tone,
+                and branding.
               </p>
             </CardContent>
           </Card>
@@ -64,7 +64,7 @@ export default function Features() {
 
             <CardContent>
               <p className="mt-3 text-sm">
-                Uses OpenAI's ChatGPT-4.1 to analyze patient questions and
+                Uses OpenAI&apos;s ChatGPT-4.1 to analyze patient questions and
                 respond with clinic-approved answers. No training data needed.
               </p>
             </CardContent>

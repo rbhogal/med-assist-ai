@@ -16,8 +16,8 @@ export default function FeaturesSection() {
               <p className="mt-6">
                 Integrate with your existing EHR and allow patients to easily
                 book, reschedule, or cancel their appointments at their
-                convenience 24/7 while keeping full control over your clinic's
-                schedule.
+                convenience 24/7 while keeping full control over your
+                clinic&apos;s schedule.
               </p>
             </div>
             <ul className="mt-8 divide-y border-y *:flex *:items-center *:gap-3 *:py-3">
