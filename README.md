@@ -1,6 +1,6 @@
 # MedAssist Chatbot & Booking
 
-An AI-powered medical assistant chatbot and appointment scheduler. It helps answer patients's frequently asked questions and quickly books appointments through the booking page once integrated with a clinic's EHR. 
+An AI-powered medical assistant chatbot and appointment scheduler. It helps answer patients's frequently asked questions and quickly books appointments through the booking page.
 <br><br>
 <div align="center" width="600">
   <img src="https://raw.githubusercontent.com/rbhogal/med-assist-ai/refs/heads/main/public/screenshots/med-assist-chat.png" alt="Med Assist Chat Screenshot" width="600"/>
