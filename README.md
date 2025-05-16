@@ -27,5 +27,5 @@ https://med-assist-ai.vercel.app/
 ## 🗓️ Planned Features
 - **Login** using Clerk for user authentication
 - **Admin Dashboard** to view patients and update incoming appointments
-- Store chat and appointment history using a Django Backend with PostgreSQL
+- **Backend Storage** Right now, I’m just using localStorage and it works totally fine for a simple MVP. But I’m planning to switch to Django + PostgreSQL (mostly because I’m learning Python and want the full-stack practice). That said, if you just want to get something working fast, Django is probably overkill. I’d recommend something like Supabase instead: it gives you a hosted Postgres DB and an auto-generated API so it's super quick to set up.
 
