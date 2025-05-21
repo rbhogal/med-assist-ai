@@ -14,7 +14,7 @@ import { Alert, AlertDescription } from "../ui/alert";
 interface Message {
   text: string;
   sender: "user" | "bot";
-  url?: string;
+  url?: string; // TODO: Update this to be more specific like bookingUrl
   availableTimes?: [];
 }
 
@@ -161,8 +161,6 @@ const Chat: React.FC = () => {
                   <Link
                     className="text-blue-500  hover:text-blue-600 font-bold"
                     href={msg.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
                   >
                     {msg.text}
                   </Link>
